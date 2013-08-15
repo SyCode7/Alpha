@@ -8,7 +8,7 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>de.uni_potsdam.hpi.cloudstore20.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>de.uni_potsdam.hpi.cloudstore20.webfrontend.server.GreetingServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>

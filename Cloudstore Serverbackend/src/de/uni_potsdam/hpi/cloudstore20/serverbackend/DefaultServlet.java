@@ -53,6 +53,7 @@ public class DefaultServlet extends HttpServlet {
 		writer.println("</html>");
 
 		writer.close();
+
 	}
 
 	/**
