@@ -2,7 +2,7 @@ package de.uni_potsdam.hpi.cloudstore20.webfrontend.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.clientfrontend.Methods;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.Methods;
 import de.uni_potsdam.hpi.cloudstore20.webfrontend.client.GreetingService;
 
 /**
