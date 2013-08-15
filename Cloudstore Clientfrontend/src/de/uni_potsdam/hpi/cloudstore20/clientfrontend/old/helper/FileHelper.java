@@ -35,7 +35,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.Settings;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.Settings;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.helper.Exceptions.CloudStoreFileException;
 
 /**

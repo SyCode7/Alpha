@@ -41,8 +41,7 @@ public abstract class StorageProvider {
 	}
 
 	/**
-	 * Uploads a file to the storage provider and verifies the integrity of the
-	 * uploaded data using hashes.
+	 * Uploads a file to the storage provider and verifies the integrity of the uploaded data using hashes.
 	 * 
 	 * @param remoteFolderName
 	 *            Folder to put the data in
@@ -51,8 +50,7 @@ public abstract class StorageProvider {
 	 * @return
 	 * @throws ProviderException
 	 */
-	public ProviderReturnValueString putFileReliable(String remoteFolderName,
-			String filePath) throws ProviderException {
+	public ProviderReturnValueString putFileReliable(String remoteFolderName, String filePath) throws ProviderException {
 
 		ProviderReturnValueString remoteID = putFile(remoteFolderName, filePath);
 		if (remoteID.getContent() != "") {
@@ -74,8 +72,7 @@ public abstract class StorageProvider {
 	}
 
 	/**
-	 * Downloads a file from the storage provider and verifies the integrity of
-	 * the downloaded data using hashes.
+	 * Downloads a file from the storage provider and verifies the integrity of the downloaded data using hashes.
 	 * 
 	 * @param remoteFolderName
 	 *            Folder to get the data from
@@ -84,11 +81,10 @@ public abstract class StorageProvider {
 	 * @return True on success and false on error
 	 * @throws ProviderException
 	 */
-	public ProviderReturnValueBoolean popFileReliable(String remoteFolderName,
-			String fileName, String destPath) throws ProviderException {
+	public ProviderReturnValueBoolean popFileReliable(String remoteFolderName, String fileName, String destPath)
+			throws ProviderException {
 
-		ProviderReturnValueBoolean result = popFile(remoteFolderName, fileName,
-				destPath);
+		ProviderReturnValueBoolean result = popFile(remoteFolderName, fileName, destPath);
 		if (result.getStatus()) {
 			File file = new File(destPath);
 			String hash = "";
@@ -119,8 +115,7 @@ public abstract class StorageProvider {
 	 * @return Filename
 	 * @throws ProviderException
 	 */
-	abstract public ProviderReturnValueString putFile(String remoteFolderName,
-			String filePath) throws ProviderException;
+	abstract public ProviderReturnValueString putFile(String remoteFolderName, String filePath) throws ProviderException;
 
 	/**
 	 * Downloads a file from the storage provider
@@ -134,8 +129,8 @@ public abstract class StorageProvider {
 	 * @return True on success and false on error
 	 * @throws ProviderException
 	 */
-	abstract public ProviderReturnValueBoolean popFile(String remoteFolderName,
-			String fileID, String destPath) throws ProviderException;
+	abstract public ProviderReturnValueBoolean popFile(String remoteFolderName, String fileID, String destPath)
+			throws ProviderException;
 
 	/**
 	 * Deletes a file from the storage provider
@@ -148,8 +143,7 @@ public abstract class StorageProvider {
 	 * @return True on success and false on error
 	 * @throws ProviderException
 	 */
-	abstract public boolean deleteFile(String remoteFolderName, String fileID)
-			throws ProviderException;
+	abstract public boolean deleteFile(String remoteFolderName, String fileID) throws ProviderException;
 
 	/**
 	 * Retrieves the remote hash of a file
@@ -161,8 +155,7 @@ public abstract class StorageProvider {
 	 * @return MD5 hash of the file
 	 * @throws ProviderException
 	 */
-	abstract public String getHash(String remoteFolderName, String fileID)
-			throws ProviderException;
+	abstract public String getHash(String remoteFolderName, String fileID) throws ProviderException;
 
 	/**
 	 * Removes all files from the storage provider
@@ -180,8 +173,7 @@ public abstract class StorageProvider {
 	 * @return A list of filenames
 	 * @throws ProviderException
 	 */
-	abstract public String[] listFiles(String remoteFolderName)
-			throws ProviderException;
+	abstract public String[] listFiles(String remoteFolderName) throws ProviderException;
 
 	abstract public boolean fileExists(String remoteFolder, String fileID);
 
@@ -203,8 +195,7 @@ public abstract class StorageProvider {
 		return this.location;
 	}
 
-	protected ProviderReturnValueString returnValue(String value, long start,
-			long end) {
+	protected ProviderReturnValueString returnValue(String value, long start, long end) {
 
 		ProviderReturnValueString returnValue = new ProviderReturnValueString();
 		returnValue.setContent(value);
@@ -213,8 +204,7 @@ public abstract class StorageProvider {
 
 	}
 
-	protected ProviderReturnValueBoolean returnValue(Boolean value, long start,
-			long end) {
+	protected ProviderReturnValueBoolean returnValue(Boolean value, long start, long end) {
 
 		ProviderReturnValueBoolean returnValue = new ProviderReturnValueBoolean();
 		returnValue.setStatus(value);
@@ -230,5 +220,15 @@ public abstract class StorageProvider {
 
 	public void setSimulateErrors(boolean value) {
 
+	}
+
+	public String getCompleteProviderName() {
+
+		String extention = "";
+		if (this.location != null) {
+			extention = " " + this.location;
+		}
+
+		return this.providerName + extention;
 	}
 }
