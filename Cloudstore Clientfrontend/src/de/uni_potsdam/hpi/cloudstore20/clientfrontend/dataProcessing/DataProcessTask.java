@@ -20,9 +20,19 @@ public class DataProcessTask {
 		return temp;
 	}
 
-	public void addMethod(DATA_PROCESS_METHOD method) {
+	public List<ProviderFileContainer> getProviderFileListFor(DATA_PROCESS_METHOD method) throws DataProcessingException {
+
+		if (this.methods.contains(method)) {
+			throw new DataProcessingException("Duplicate Method on same Task");
+		}
 
 		this.methods.add(method);
-
+		return this.providerAndFiles;
 	}
+
+	public void addProviderFileContainer(ProviderFileContainer pfc) {
+
+		this.providerAndFiles.add(pfc);
+	}
+
 }
