@@ -2,7 +2,8 @@ package de.uni_potsdam.hpi.cloudstore20.meta;
 
 public enum CommunicationInformation {
 
-	abs("test");
+	dataReq("requests the whole datalist"),
+	dataAns("datalist as answer");
 
 	private String description;
 

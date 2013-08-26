@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.BackupConfigTab;
@@ -80,6 +81,9 @@ public class DefaultWindow {
 		this.tabFolder = new TabFolder(sashForm, SWT.NONE);
 
 		this.loadTabElements();
+
+		TabItem tbtmOnlydesigner = new TabItem(tabFolder, SWT.NONE);
+		tbtmOnlydesigner.setText("Only4Designer");
 
 		Button btnBeenden = new Button(sashForm, SWT.NONE);
 		btnBeenden.addMouseListener(new MouseAdapter() {

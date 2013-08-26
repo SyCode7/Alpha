@@ -34,8 +34,9 @@ public class ErasureTest {
 		FileHelper.generateRandomContentFile(this.tempFile, this.fileSize);
 		this.startContent = new LinkedList<ProviderFileContainer>();
 		for (int i = 0; i < this.m + this.k; i++) {
-			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider(String.valueOf(System
-					.currentTimeMillis())));
+			ProviderFileContainer pfc = new ProviderFileContainer(
+					new MockupStorageProvider(String.valueOf(System
+							.currentTimeMillis())));
 			this.startContent.add(pfc);
 		}
 		this.startContent.get(0).addFile(new File(this.tempFile));
