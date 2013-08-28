@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.dialog;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -6,11 +6,11 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class OpenDialog implements SelectionListener {
+public class SaveDialog implements SelectionListener {
 
 	private Shell s;
 
-	public OpenDialog(Shell s) {
+	public SaveDialog(Shell s) {
 
 		this.s = s;
 	}
@@ -18,13 +18,13 @@ public class OpenDialog implements SelectionListener {
 	@Override
 	public void widgetSelected(SelectionEvent event) {
 
-		FileDialog fd = new FileDialog(s, SWT.OPEN);
-		fd.setText("Open");
+		FileDialog fd = new FileDialog(s, SWT.SAVE);
+		fd.setText("Save");
 		fd.setFilterPath("C:/");
 		String[] filterExt = { "*.txt", "*.doc", ".rtf", "*.*" };
 		fd.setFilterExtensions(filterExt);
 		String selected = fd.open();
-		System.out.println("Datei ausgewählt: " + selected);
+		System.out.println("Datei speichern: " + selected);
 	}
 
 	@Override
