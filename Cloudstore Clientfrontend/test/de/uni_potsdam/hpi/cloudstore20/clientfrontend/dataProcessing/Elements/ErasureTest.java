@@ -3,14 +3,14 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.Elements;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessElement;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessElement.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.ProviderFileContainer;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.helper.FileHelper;
@@ -23,8 +23,8 @@ public class ErasureTest {
 	private int k = 4;
 	private int m = 2;
 
-	private List<ProviderFileContainer> startContent;
-	private List<ProviderFileContainer> resultContent;
+	private DataProcessTask startContent;
+	private DataProcessTask resultContent;
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,21 +32,20 @@ public class ErasureTest {
 		this.tempFile = System.getProperty("java.io.tmpdir") + "tempFile";
 
 		FileHelper.generateRandomContentFile(this.tempFile, this.fileSize);
-		this.startContent = new LinkedList<ProviderFileContainer>();
+		this.startContent = new DataProcessTask(new File(this.tempFile));
 		for (int i = 0; i < this.m + this.k; i++) {
-			ProviderFileContainer pfc = new ProviderFileContainer(
-					new MockupStorageProvider(String.valueOf(System
-							.currentTimeMillis())));
-			this.startContent.add(pfc);
+			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider(String.valueOf(System
+					.currentTimeMillis())));
+			this.startContent.addProviderFileContainer(pfc);
 		}
-		this.startContent.get(0).addFile(new File(this.tempFile));
+		this.startContent.getProviderFileListFor(DATA_PROCESS_METHOD.test).get(0).addFile(new File(this.tempFile));
 
 	}
 
 	@After
 	public void tearDown() throws Exception {
 
-		for (ProviderFileContainer pfc : this.resultContent) {
+		for (ProviderFileContainer pfc : this.resultContent.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {
 			for (File f : pfc.getFileList()) {
 				f.delete();
 			}
@@ -62,7 +61,7 @@ public class ErasureTest {
 		DataProcessElement dpt = new Erasure();
 		try {
 			this.resultContent = dpt.doProcessing(this.startContent);
-			for (ProviderFileContainer pfc : this.resultContent) {
+			for (ProviderFileContainer pfc : this.resultContent.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {
 				if (pfc.getFileList().size() != 1) {
 					fail("Ein Provider hat nicht genau ein Chunk");
 				}

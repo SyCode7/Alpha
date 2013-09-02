@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.meta.dataList;
+package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList;
 
 public class DataListElement {
 

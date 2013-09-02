@@ -11,9 +11,15 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.uni_potsdam.hpi.cloudstore20.meta.dataList.DataListTest;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListElement;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListException;
+
 public class DataListTab extends TabElement {
 
 	public DataListTab(TabFolder tabFolder) {
+
 		super(tabFolder);
 	}
 
@@ -40,7 +46,14 @@ public class DataListTab extends TabElement {
 
 	}
 
-	private void buildFileTree(final Tree tree) {
+	private DataList loadContent() throws DataListException {
+
+		// TODO: Transfer und Laden aus DB
+		return DataListTest.getSampleDataList();
+
+	}
+
+	private void loadDefault(Tree tree) {
 
 		for (int i = 0; i < 4; i++) {
 			TreeItem item0 = new TreeItem(tree, 0);
@@ -54,6 +67,48 @@ public class DataListTab extends TabElement {
 				}
 			}
 		}
+	}
+
+	private void buildTreeContent(Tree tree, DataList content) throws DataListException {
+
+		for (DataListElement dle : content.getContent()) {
+
+			TreeItem item = new TreeItem(tree, 0);
+			item.setText(dle.getName());
+			if (dle.isFolder()) {
+				this.buildTreeContent(item, dle.getFolderContent());
+			}
+
+		}
+
+	}
+
+	private void buildTreeContent(TreeItem treeItem, DataList content) throws DataListException {
+
+		for (DataListElement dle : content.getContent()) {
+
+			TreeItem item = new TreeItem(treeItem, 0);
+			item.setText(dle.getName());
+			if (dle.isFolder()) {
+				this.buildTreeContent(item, dle.getFolderContent());
+			}
+
+		}
+
+	}
+
+	private void buildFileTree(final Tree tree) {
+
+		try {
+			DataList content = this.loadContent();
+			this.buildTreeContent(tree, content);
+		} catch (DataListException e1) {
+			e1.printStackTrace();
+
+			this.loadDefault(tree);
+
+		}
+
 		tree.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event e) {

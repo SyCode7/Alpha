@@ -1,5 +1,6 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,17 @@ public class DataProcessTask {
 
 	private List<ProviderFileContainer> providerAndFiles = new LinkedList<ProviderFileContainer>();
 	private List<DATA_PROCESS_METHOD> methods = new LinkedList<DATA_PROCESS_METHOD>();
+	private File originalFile;
+
+	public DataProcessTask(File originalFile) {
+
+		this.originalFile = originalFile;
+	}
+
+	public File getOriginalFile() {
+
+		return this.originalFile;
+	}
 
 	public List<DATA_PROCESS_METHOD> getMethods() {
 
@@ -22,7 +34,7 @@ public class DataProcessTask {
 
 	public List<ProviderFileContainer> getProviderFileListFor(DATA_PROCESS_METHOD method) throws DataProcessingException {
 
-		if (this.methods.contains(method)) {
+		if ((method != DATA_PROCESS_METHOD.test) && this.methods.contains(method)) {
 			throw new DataProcessingException("Duplicate Method on same Task");
 		}
 

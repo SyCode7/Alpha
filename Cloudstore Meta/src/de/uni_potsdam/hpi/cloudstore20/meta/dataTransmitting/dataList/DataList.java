@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.meta.dataList;
+package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +11,7 @@ public class DataList {
 		this.content = this.buildDataListFromString(wholeContent, 0);
 	}
 
-	public String getDataListAsString() throws DataListException {
+	public String getClassAsString() throws DataListException {
 		return this.getDataListAsString(this, 0);
 	}
 

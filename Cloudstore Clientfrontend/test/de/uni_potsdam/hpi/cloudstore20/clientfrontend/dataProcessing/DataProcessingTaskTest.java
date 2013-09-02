@@ -2,6 +2,7 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.List;
 
 import org.junit.After;
@@ -18,7 +19,7 @@ public class DataProcessingTaskTest {
 	@Before
 	public void setUp() throws Exception {
 
-		this.dpt = new DataProcessTask();
+		this.dpt = new DataProcessTask(new File(""));
 		for (int i = 0; i < 6; i++) {
 			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider(String.valueOf(System
 					.currentTimeMillis())));
