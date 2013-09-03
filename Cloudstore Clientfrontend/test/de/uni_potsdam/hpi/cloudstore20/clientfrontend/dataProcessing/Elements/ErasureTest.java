@@ -8,13 +8,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessElement;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessElement.DATA_PROCESS_METHOD;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessTask;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.DataProcessingException;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.ProviderFileContainer;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessElement;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.Erasure;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.helper.FileHelper;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.provider.MockupStorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 
 public class ErasureTest {
 

@@ -4,7 +4,6 @@ public abstract class DataTransmittingClass {
 
 	public DataTransmittingClass(String content) throws DataTransmittingException {
 
-		throw new DataTransmittingException("not implemented");
 	}
 
 	public abstract String getClassAsString() throws DataTransmittingException;

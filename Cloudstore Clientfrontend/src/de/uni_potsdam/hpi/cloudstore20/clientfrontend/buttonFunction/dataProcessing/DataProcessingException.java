@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing;
 
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 

@@ -3,24 +3,31 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DataList {
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingClass;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingException;
+
+public class DataList extends DataTransmittingClass {
 
 	private List<DataListElement> content = new LinkedList<DataListElement>();
 
-	public DataList(String wholeContent) {
-		this.content = this.buildDataListFromString(wholeContent, 0);
+	public DataList(String content) throws DataTransmittingException {
+
+		super(content);
+		this.content = this.buildDataListFromString(content, 0);
 	}
 
 	public String getClassAsString() throws DataListException {
+
 		return this.getDataListAsString(this, 0);
 	}
 
-	private DataList(List<DataListElement> content) {
+	private DataList(List<DataListElement> content) throws DataTransmittingException {
+
+		super(null);
 		this.content = content;
 	}
 
-	private String getDataListAsString(DataList dataList, int level)
-			throws DataListException {
+	private String getDataListAsString(DataList dataList, int level) throws DataListException {
 
 		StringBuilder content = new StringBuilder();
 
@@ -31,10 +38,7 @@ public class DataList {
 			}
 
 			if (dle.isFolder()) {
-				content.append(dle.getName())
-						.append("#+#")
-						.append(this.getDataListAsString(
-								dle.getFolderContent(), level + 1))
+				content.append(dle.getName()).append("#+#").append(this.getDataListAsString(dle.getFolderContent(), level + 1))
 						.append("#-#");
 			} else {
 				content.append(dle.getName());
@@ -45,7 +49,7 @@ public class DataList {
 		return content.toString();
 	}
 
-	private List<DataListElement> buildDataListFromString(String s, int level) {
+	private List<DataListElement> buildDataListFromString(String s, int level) throws DataTransmittingException {
 
 		List<DataListElement> returnValue = new LinkedList<DataListElement>();
 		String splitter = "#" + level + "#";
@@ -56,9 +60,8 @@ public class DataList {
 
 			if (element.contains("#+#")) {
 				String[] splitted = element.split("#+#");
-				dle = new DataListElement(splitted[0], new DataList(
-						this.buildDataListFromString(
-								splitted[1].replace("#-#", ""), level + 1)));
+				dle = new DataListElement(splitted[0], new DataList(this.buildDataListFromString(splitted[1].replace("#-#", ""),
+						level + 1)));
 			} else {
 				dle = new DataListElement(element);
 			}
@@ -71,6 +74,7 @@ public class DataList {
 	}
 
 	public List<DataListElement> getContent() {
+
 		return this.content;
 	}
 

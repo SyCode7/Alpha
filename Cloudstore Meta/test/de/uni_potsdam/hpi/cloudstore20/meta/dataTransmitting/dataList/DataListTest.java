@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListException;
@@ -67,7 +68,7 @@ public class DataListTest {
 	}
 
 	@Test
-	public void testDataList() {
+	public void testDataList() throws DataTransmittingException {
 
 		this.dl = new DataList(this.content);
 		try {
