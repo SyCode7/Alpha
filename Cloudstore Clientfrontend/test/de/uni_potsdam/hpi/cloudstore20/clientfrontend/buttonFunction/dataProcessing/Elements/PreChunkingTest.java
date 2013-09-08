@@ -1,12 +1,13 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.Elements;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UploadOptimizerTest {
+
+public class PreChunkingTest {
 
 	@Before
 	public void setUp() throws Exception {

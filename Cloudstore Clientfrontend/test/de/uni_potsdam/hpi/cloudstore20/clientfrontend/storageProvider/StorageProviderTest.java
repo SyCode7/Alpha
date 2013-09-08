@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.Elements;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class PreChunkingTest {
+public class StorageProviderTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -20,7 +20,13 @@ public class PreChunkingTest {
 	}
 
 	@Test
-	public void testDoProcessing() {
+	public void testGetProcessStatus() {
+
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetCompleteProviderName() {
 
 		fail("Not yet implemented");
 	}

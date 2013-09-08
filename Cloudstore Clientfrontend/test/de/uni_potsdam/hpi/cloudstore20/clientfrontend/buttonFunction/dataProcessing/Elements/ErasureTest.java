@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.Elements;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements;
 
 import static org.junit.Assert.fail;
 
@@ -12,7 +12,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.Erasure;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
@@ -50,6 +49,8 @@ public class ErasureTest {
 			for (File f : pfc.getFileList()) {
 				f.delete();
 			}
+
+			((MockupStorageProvider) pfc.getProvider()).cleanUp();
 		}
 
 		new File(this.tempFile).delete();

@@ -30,6 +30,10 @@ public class DataProcessingTaskTest {
 	@After
 	public void tearDown() throws Exception {
 
+		for (ProviderFileContainer pfc : this.dpt.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {
+			((MockupStorageProvider) pfc.getProvider()).cleanUp();
+		}
+
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.dataProcessing.Elements;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements;
 
 import static org.junit.Assert.fail;
 
@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PreSlicingTest {
+public class UploadOptimizerTest {
 
 	@Before
 	public void setUp() throws Exception {

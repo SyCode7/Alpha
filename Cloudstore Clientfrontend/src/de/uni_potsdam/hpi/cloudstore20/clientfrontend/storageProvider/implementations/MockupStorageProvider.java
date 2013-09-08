@@ -18,6 +18,10 @@ public class MockupStorageProvider extends StorageProvider {
 
 		super("Mockup");
 
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {}
+
 		this.createTempWorkingDir();
 	}
 
@@ -108,6 +112,28 @@ public class MockupStorageProvider extends StorageProvider {
 			new StorageProviderException(e.getMessage(), e.getCause());
 		}
 		return md5;
+	}
+
+	public void cleanUp() {
+
+		this.deleteFolderContent(this.workingDir);
+
+	}
+
+	private void deleteFolderContent(File f) {
+
+		for (File f_ : f.listFiles()) {
+
+			if (f_.isDirectory()) {
+				this.deleteFolderContent(f_);
+			}
+
+			f_.delete();
+
+		}
+
+		f.delete();
+
 	}
 
 }

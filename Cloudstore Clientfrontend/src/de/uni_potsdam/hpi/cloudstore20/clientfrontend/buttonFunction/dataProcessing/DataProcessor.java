@@ -11,7 +11,7 @@ public class DataProcessor {
 
 	private static String packageName = "de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.";
 
-	public static DataProcessTask processFile(CloudstoreConfig config, File file) {
+	public static DataProcessTask processFile(CloudstoreConfig config, File file) throws DataProcessingException {
 
 		DataProcessTask dpt = new DataProcessTask(file);
 
@@ -23,11 +23,7 @@ public class DataProcessor {
 						(DataProcessor.packageName + dpm.getClassName()), param);
 				dpe.doProcessing(dpt);
 			} catch (ReflectionException e) {
-				// TODO: Handling ausdenken
-				e.printStackTrace();
-			} catch (DataProcessingException e) {
-				// TODO: Handling ausdenken
-				e.printStackTrace();
+				throw new DataProcessingException(e.getMessage(), e.getCause());
 			}
 		}
 
