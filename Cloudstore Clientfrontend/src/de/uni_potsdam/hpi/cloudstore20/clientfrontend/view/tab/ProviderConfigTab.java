@@ -10,11 +10,13 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+
 public class ProviderConfigTab extends TabElement {
 
-	public ProviderConfigTab(TabFolder tabFolder) {
+	public ProviderConfigTab(TabFolder tabFolder, DefaultWindow window) {
 
-		super(tabFolder);
+		super(tabFolder, window);
 	}
 
 	@Override

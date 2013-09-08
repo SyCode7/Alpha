@@ -22,12 +22,15 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.MapTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.ProviderConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 
 public class DefaultWindow {
 
-	private Shell shell;
+	public Shell shell;
 	private Display display;
 	private TabFolder tabFolder;
+
+	public CloudstoreConfig config;
 
 	/**
 	 * Launch the application.
@@ -38,10 +41,16 @@ public class DefaultWindow {
 
 		try {
 			DefaultWindow window = new DefaultWindow();
+			window.loadConfig();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void loadConfig() {
+
+		this.config = CloudstoreConfig.loadDefault();
 	}
 
 	/**
@@ -78,8 +87,7 @@ public class DefaultWindow {
 		SashForm sashForm = new SashForm(this.shell, SWT.VERTICAL);
 
 		Label lblHeaderText = new Label(sashForm, SWT.NONE);
-		lblHeaderText.setFont(SWTResourceManager.getFont("Segoe UI", 13,
-				SWT.BOLD));
+		lblHeaderText.setFont(SWTResourceManager.getFont("Segoe UI", 13, SWT.BOLD));
 		lblHeaderText.setText("CloudRaid - Futuristic Online Storage for now");
 
 		this.tabFolder = new TabFolder(sashForm, SWT.NONE);
@@ -93,12 +101,8 @@ public class DefaultWindow {
 
 		this.loginButton(sashForm);
 
-		sashForm.setWeights(new int[] { 2, 20, 1, 1 });
-
-	}
-
-	private void loginButton(SashForm sashForm) {
-		Button btnLogin = new Button(sashForm, SWT.NONE);
+		SashForm sashForm_1 = new SashForm(sashForm, SWT.NONE);
+		Button btnLogin = new Button(sashForm_1, SWT.NONE);
 		btnLogin.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(final SelectionEvent e) {
@@ -109,9 +113,30 @@ public class DefaultWindow {
 			}
 		});
 		btnLogin.setText("Login");
+
+		final Button btnLoadfromserver = new Button(sashForm_1, SWT.CHECK);
+		btnLoadfromserver.setSelection(config.getLoadFromServer());
+		btnLoadfromserver.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+
+				config.setLoadFromServer(btnLoadfromserver.getSelection());
+
+			}
+		});
+		btnLoadfromserver.setText("loadFromServer");
+		sashForm_1.setWeights(new int[] { 1, 1 });
+
+		sashForm.setWeights(new int[] { 2, 20, 1, 1 });
+
+	}
+
+	private void loginButton(SashForm sashForm) {
+
 	}
 
 	private void closeButton(SashForm sashForm) {
+
 		Button btnBeenden = new Button(sashForm, SWT.NONE);
 		btnBeenden.addMouseListener(new MouseAdapter() {
 
@@ -126,17 +151,17 @@ public class DefaultWindow {
 
 	private void loadTabElements() {
 
-		new DataListTab(tabFolder);
+		new DataListTab(tabFolder, this);
 
-		new MapTab(tabFolder);
+		new MapTab(tabFolder, this);
 
-		new ProviderConfigTab(tabFolder);
+		new ProviderConfigTab(tabFolder, this);
 
-		new BackupConfigTab(tabFolder, shell);
+		new BackupConfigTab(tabFolder, this);
 
-		new UploadTab(tabFolder);
+		new UploadTab(tabFolder, this);
 
-		new UploadConfigTab(tabFolder);
+		new UploadConfigTab(tabFolder, this);
 
 	}
 

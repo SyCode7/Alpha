@@ -9,11 +9,13 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+
 public class UploadConfigTab extends TabElement {
 
-	public UploadConfigTab(TabFolder folder) {
+	public UploadConfigTab(TabFolder folder, DefaultWindow window) {
 
-		super(folder);
+		super(folder, window);
 	}
 
 	@Override

@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.DatabaseRequest;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicator;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.StorageProvider;
 
 public class ProviderFileContainer {
@@ -13,10 +14,10 @@ public class ProviderFileContainer {
 	private StorageProvider provider;
 	private long speed = 0;
 
-	public ProviderFileContainer(StorageProvider provider) {
+	public ProviderFileContainer(StorageProvider provider) throws ServletCommunicationException {
 
 		this.provider = provider;
-		this.speed = DatabaseRequest.getProviderSpeed(this.provider.getCompleteProviderName());
+		this.speed = ServletCommunicator.getProviderSpeed(this.provider.getCompleteProviderName());
 	}
 
 	private ProviderFileContainer(StorageProvider provider, long speed) {

@@ -16,6 +16,8 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	private int k;
 	private int m;
 
+	private boolean loadFromServer = false;
+
 	public CloudstoreConfig(String content) throws DataTransmittingException {
 
 		super(content);
@@ -99,6 +101,16 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	public int getM() {
 
 		return this.m;
+	}
+
+	public void setLoadFromServer(boolean bool) {
+
+		this.loadFromServer = bool;
+	}
+
+	public boolean getLoadFromServer() {
+
+		return this.loadFromServer;
 	}
 
 	public static CloudstoreConfig loadDefault() {

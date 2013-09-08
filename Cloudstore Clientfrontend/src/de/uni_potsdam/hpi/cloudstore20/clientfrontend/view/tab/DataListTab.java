@@ -11,6 +11,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicator;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListException;
@@ -18,9 +21,9 @@ import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListTe
 
 public class DataListTab extends TabElement {
 
-	public DataListTab(TabFolder tabFolder) {
+	public DataListTab(TabFolder tabFolder, DefaultWindow window) {
 
-		super(tabFolder);
+		super(tabFolder, window);
 	}
 
 	@Override
@@ -48,9 +51,18 @@ public class DataListTab extends TabElement {
 
 	private DataList loadContent() throws DataListException {
 
-		// TODO: Transfer und Laden aus DB
-		return DataListTest.getSampleDataList();
+		DataList dl = null;
+		if (this.window.config.getLoadFromServer()) {
+			try {
+				dl = ServletCommunicator.getDataList();
+			} catch (ServletCommunicationException e) {
+				dl = DataListTest.getSampleDataList("fe_excep");
+			}
+		} else {
+			dl = DataListTest.getSampleDataList("frontend");
+		}
 
+		return dl;
 	}
 
 	private void loadDefault(Tree tree) {

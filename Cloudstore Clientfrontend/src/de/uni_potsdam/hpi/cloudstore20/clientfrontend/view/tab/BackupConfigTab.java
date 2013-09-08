@@ -8,26 +8,26 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 
 public class BackupConfigTab extends TabElement {
 
 	private SashForm sashForm_2;
 	private Button btnCheckButton;
-	protected Shell shell;
 
-	public BackupConfigTab(TabFolder tabFolder, Shell shell) {
+	public BackupConfigTab(TabFolder tabFolder, DefaultWindow window) {
 
-		super(tabFolder);
-		this.shell = shell;
+		super(tabFolder, window);
 
 	}
 
 	@Override
 	protected void createContent() {
+
 		TabItem tbtmOuBE = new TabItem(this.tabFolder, SWT.NONE);
 		tbtmOuBE.setText("Ordner und Backup Einstellungen");
 
@@ -72,7 +72,7 @@ public class BackupConfigTab extends TabElement {
 			@Override
 			public void mouseUp(MouseEvent e) {
 
-				DirectoryDialog dialog = new DirectoryDialog(shell);
+				DirectoryDialog dialog = new DirectoryDialog(window.shell);
 				String folderPath = dialog.open();
 				if (folderPath == null) {
 					folderPath = "";
@@ -86,8 +86,7 @@ public class BackupConfigTab extends TabElement {
 		sashForm_2.setWeights(new int[] { 95, 325, 157, 49 });
 
 		new Composite(sashForm_1, SWT.NONE);
-		sashForm_1
-				.setWeights(new int[] { 36, 16, 16, 16, 16, 32, 16, 24, 159 });
+		sashForm_1.setWeights(new int[] { 36, 16, 16, 16, 16, 32, 16, 24, 159 });
 
 	}
 

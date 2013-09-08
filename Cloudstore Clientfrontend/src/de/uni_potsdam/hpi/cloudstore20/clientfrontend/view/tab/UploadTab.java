@@ -11,10 +11,13 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+
 public class UploadTab extends TabElement {
 
-	public UploadTab(TabFolder tabFolder) {
-		super(tabFolder);
+	public UploadTab(TabFolder tabFolder, DefaultWindow window) {
+
+		super(tabFolder, window);
 	}
 
 	@Override
@@ -46,8 +49,10 @@ public class UploadTab extends TabElement {
 
 		final ProgressBar pb2 = new ProgressBar(sashForm_3, SWT.SMOOTH);
 		pb2.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mouseUp(MouseEvent e) {
+
 				pb2.setSelection((int) (Math.random() * 100));
 			}
 		});

@@ -5,14 +5,18 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+
 public class MapTab extends TabElement {
 
-	public MapTab(TabFolder tabFolder) {
-		super(tabFolder);
+	public MapTab(TabFolder tabFolder, DefaultWindow window) {
+
+		super(tabFolder, window);
 	}
 
 	@Override
 	protected void createContent() {
+
 		TabItem tbtmKarte = new TabItem(tabFolder, SWT.NONE);
 		tbtmKarte.setText("Karte");
 

@@ -18,14 +18,16 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import de.uni_potsdam.hpi.cloudstore20.meta.CommunicationInformation;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
+
 public class ServletCommunicator {
 
-	public static void sendPostRequestToServlet(String content)
-			throws IOException {
+	private static void sendPostRequestToServlet(String content) throws IOException {
 
 		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(
-				"http://localhost:8080/Cloudstore_Serverbackend/DefaultServlet");
+		HttpPost httppost = new HttpPost("http://localhost:8080/Cloudstore_Serverbackend/DefaultServlet");
 
 		// Request parameters and other properties.
 		List<NameValuePair> params = new ArrayList<NameValuePair>(2);
@@ -48,20 +50,43 @@ public class ServletCommunicator {
 
 	}
 
-	public static void sendGetRequestToServlet(String content)
-			throws IOException {
+	private static String sendGetRequestToServlet(CommunicationInformation info) throws IOException {
 
-		URL url = new URL(
-				"http://localhost:8080/Cloudstore_Serverbackend/DefaultServlet?message="
-						+ content);
+		URL url = new URL("http://localhost:8080/Cloudstore_Serverbackend/DefaultServlet?message=" + info);
 		URLConnection yc = url.openConnection();
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				yc.getInputStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
 		String inputLine;
-
-		while ((inputLine = in.readLine()) != null)
+		String answer = null;
+		while ((inputLine = in.readLine()) != null) {
 			System.out.println(inputLine);
+			if (inputLine.startsWith("answer")) {
+				answer = inputLine.split("=")[1];
+			}
+		}
 		in.close();
+
+		return answer;
+	}
+
+	public static long getProviderSpeed(String providerName) throws ServletCommunicationException {
+
+		// TODO: implementieren: abfrage der Informationen vom Server über ServletCommunicator
+		return 1l;
+	}
+
+	public static DataList getDataList() throws ServletCommunicationException {
+
+		try {
+			String answer = ServletCommunicator.sendGetRequestToServlet(CommunicationInformation.dataList);
+
+			if ("".equals(answer) || answer == null) {
+				throw new ServletCommunicationException("Es wurde nichts übertragen");
+			}
+
+			return new DataList(answer);
+		} catch (IOException | DataTransmittingException e) {
+			throw new ServletCommunicationException(e.getMessage(), e.getCause());
+		}
 
 	}
 

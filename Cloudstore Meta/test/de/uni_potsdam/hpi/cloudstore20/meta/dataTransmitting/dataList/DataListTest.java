@@ -23,33 +23,30 @@ public class DataListTest {
 
 		this.content = "file1#0#file2#0#folder={file1#1#folder={file1}}#0#file3";
 
-		this.dl = DataListTest.getSampleDataList();
+		this.dl = DataListTest.getSampleDataList("setUp");
 	}
 
-	public static DataList getSampleDataList() throws DataListException {
+	public static DataList getSampleDataList(String prefix) throws DataListException {
 
 		List<DataListElement> content1 = new LinkedList<DataListElement>();
 		List<DataListElement> content2 = new LinkedList<DataListElement>();
 		List<DataListElement> content3 = new LinkedList<DataListElement>();
 
-		content3.add(new DataListElement("file1"));
+		content3.add(new DataListElement(prefix + "_file1"));
 
-		content2.add(new DataListElement("file1"));
-		content2.add(new DataListElement("folder", DataListTest
-				.getDataList(content3)));
+		content2.add(new DataListElement(prefix + "_file1"));
+		content2.add(new DataListElement(prefix + "_folder", DataListTest.getDataList(content3)));
 
-		content1.add(new DataListElement("file1"));
-		content1.add(new DataListElement("file2"));
-		content1.add(new DataListElement("folder", DataListTest
-				.getDataList(content2)));
-		content1.add(new DataListElement("file3"));
+		content1.add(new DataListElement(prefix + "_file1"));
+		content1.add(new DataListElement(prefix + "_file2"));
+		content1.add(new DataListElement(prefix + "_folder", DataListTest.getDataList(content2)));
+		content1.add(new DataListElement(prefix + "_file3"));
 
 		return DataListTest.getDataList(content1);
 
 	}
 
-	private static DataList getDataList(List<DataListElement> content)
-			throws DataListException {
+	private static DataList getDataList(List<DataListElement> content) throws DataListException {
 
 		Constructor<?> constructor;
 		try {
