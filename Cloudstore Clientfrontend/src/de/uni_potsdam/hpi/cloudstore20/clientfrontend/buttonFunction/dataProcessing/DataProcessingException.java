@@ -7,13 +7,15 @@ public class DataProcessingException extends CloudstoreException {
 	private static final long serialVersionUID = -7065916029596735583L;
 
 	public DataProcessingException(String message) {
-
 		super(message);
 	}
 
-	public DataProcessingException(String message, Exception e) {
+	public DataProcessingException(Throwable cause) {
+		super(cause);
+	}
 
-		super(message);
+	public DataProcessingException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 }

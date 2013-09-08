@@ -5,8 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.DatabaseRequest;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.helper.Exceptions.CloudStoreFileException;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.provider.StorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.StorageProvider;
 
 public class ProviderFileContainer {
 
@@ -36,14 +35,14 @@ public class ProviderFileContainer {
 		this.files.add(f);
 	}
 
-	public void replaceFile(File oldFile, File newFile) throws CloudStoreFileException {
+	public void replaceFile(File oldFile, File newFile) throws ProviderFileContainerException {
 
 		if (oldFile == null || newFile == null) {
 			throw new NullPointerException();
 		}
 
 		if (!this.files.remove(oldFile)) {
-			throw new CloudStoreFileException("Datei ist nicht in der Liste enthalten: " + oldFile.getName());
+			throw new ProviderFileContainerException("Datei ist nicht in der Liste enthalten: " + oldFile.getName());
 		}
 
 		this.addFile(newFile);
@@ -63,10 +62,10 @@ public class ProviderFileContainer {
 		return time;
 	}
 
-	public File getBiggestFile() throws CloudStoreFileException {
+	public File getBiggestFile() throws ProviderFileContainerException {
 
 		if (this.files.size() == 0) {
-			throw new CloudStoreFileException("Noch keine Datei in der Liste!");
+			throw new ProviderFileContainerException("Noch keine Datei in der Liste!");
 		}
 
 		File temp = this.files.get(0);

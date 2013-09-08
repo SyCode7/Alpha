@@ -9,10 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.provider.MockupStorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 
 public class DataProcessingTaskTest {
@@ -24,8 +21,7 @@ public class DataProcessingTaskTest {
 
 		this.dpt = new DataProcessTask(new File(""));
 		for (int i = 0; i < 6; i++) {
-			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider(String.valueOf(System
-					.currentTimeMillis())));
+			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider());
 			this.dpt.addProviderFileContainer(pfc);
 		}
 

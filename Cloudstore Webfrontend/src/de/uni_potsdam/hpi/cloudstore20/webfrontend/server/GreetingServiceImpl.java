@@ -2,7 +2,6 @@ package de.uni_potsdam.hpi.cloudstore20.webfrontend.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.Methods;
 import de.uni_potsdam.hpi.cloudstore20.webfrontend.client.GreetingService;
 
 /**
@@ -15,8 +14,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public String example(String name) throws IllegalArgumentException {
-
-		Methods.testMethod();
 
 		return null;
 	}

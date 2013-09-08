@@ -13,10 +13,10 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.Erasure;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.helper.FileHelper;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.provider.MockupStorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class ErasureTest {
 
@@ -36,8 +36,7 @@ public class ErasureTest {
 		FileHelper.generateRandomContentFile(this.tempFile, this.fileSize);
 		this.startContent = new DataProcessTask(new File(this.tempFile));
 		for (int i = 0; i < this.m + this.k; i++) {
-			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider(String.valueOf(System
-					.currentTimeMillis())));
+			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider());
 			this.startContent.addProviderFileContainer(pfc);
 		}
 		this.startContent.getProviderFileListFor(DATA_PROCESS_METHOD.test).get(0).addFile(new File(this.tempFile));
