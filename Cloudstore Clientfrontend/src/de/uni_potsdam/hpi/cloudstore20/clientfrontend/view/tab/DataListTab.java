@@ -11,10 +11,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.uni_potsdam.hpi.cloudstore20.meta.dataList.DataListTest;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListTest;
 
 public class DataListTab extends TabElement {
 

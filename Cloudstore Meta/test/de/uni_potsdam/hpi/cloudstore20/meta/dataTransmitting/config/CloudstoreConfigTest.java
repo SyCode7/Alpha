@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+
 public class CloudstoreConfigTest {
 
 	private final CloudstoreConfig startCC = CloudstoreConfig.loadDefault();

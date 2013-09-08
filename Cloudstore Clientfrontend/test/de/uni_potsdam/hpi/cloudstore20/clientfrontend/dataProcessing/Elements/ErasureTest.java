@@ -15,6 +15,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.Erasure;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.helper.FileHelper;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.old.provider.MockupStorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 
 public class ErasureTest {
@@ -59,7 +60,7 @@ public class ErasureTest {
 	@Test
 	public void testDoProcessing() {
 
-		DataProcessElement dpt = new Erasure();
+		DataProcessElement dpt = new Erasure(CloudstoreConfig.loadDefault());
 		try {
 			this.resultContent = dpt.doProcessing(this.startContent);
 			for (ProviderFileContainer pfc : this.resultContent.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {

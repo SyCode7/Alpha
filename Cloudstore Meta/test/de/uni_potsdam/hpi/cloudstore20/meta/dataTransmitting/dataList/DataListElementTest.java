@@ -1,12 +1,13 @@
 package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DataListTest {
+
+public class DataListElementTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -19,19 +20,31 @@ public class DataListTest {
 	}
 
 	@Test
-	public void testGetClassAsString() {
+	public void testGetName() {
 
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testDataList() {
+	public void testIsFolder() {
 
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testGetContent() {
+	public void testGetFolderContent() {
+
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testDataListElementStringDataList() {
+
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testDataListElementString() {
 
 		fail("Not yet implemented");
 	}
