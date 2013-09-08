@@ -38,8 +38,8 @@ public class DataList extends DataTransmittingClass {
 			}
 
 			if (dle.isFolder()) {
-				content.append(dle.getName()).append("#+#").append(this.getDataListAsString(dle.getFolderContent(), level + 1))
-						.append("#-#");
+				content.append(dle.getName()).append("#fa" + level + "#")
+						.append(this.getDataListAsString(dle.getFolderContent(), level + 1)).append("#fz" + level + "#");
 			} else {
 				content.append(dle.getName());
 			}
@@ -58,10 +58,10 @@ public class DataList extends DataTransmittingClass {
 
 			DataListElement dle;
 
-			if (element.contains("#+#")) {
-				String[] splitted = element.split("#+#");
-				dle = new DataListElement(splitted[0], new DataList(this.buildDataListFromString(splitted[1].replace("#-#", ""),
-						level + 1)));
+			if (element.contains("#fa" + level + "#")) {
+				String[] splitted = element.split("#fa" + level + "#");
+				dle = new DataListElement(splitted[0], new DataList(this.buildDataListFromString(
+						splitted[1].replace("#fz" + level + "#", ""), level + 1)));
 			} else {
 				dle = new DataListElement(element);
 			}
@@ -75,7 +75,13 @@ public class DataList extends DataTransmittingClass {
 
 	public List<DataListElement> getContent() {
 
-		return this.content;
+		List<DataListElement> temp = new LinkedList<DataListElement>();
+
+		for (DataListElement dle : this.content) {
+			temp.add(dle);
+		}
+
+		return temp;
 	}
 
 }

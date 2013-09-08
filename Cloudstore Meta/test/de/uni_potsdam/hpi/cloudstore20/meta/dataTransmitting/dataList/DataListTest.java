@@ -21,7 +21,7 @@ public class DataListTest {
 	@Before
 	public void setUp() throws Exception {
 
-		this.content = "file1#0#file2#0#folder={file1#1#folder={file1}}#0#file3";
+		this.content = "setUp_file1#0#setUp_file2#0#setUp_folder#fa0#setUp_file1#1#setUp_folder#fa1#setUp_file1#fz1##fz0##0#setUp_file3";
 
 		this.dl = DataListTest.getSampleDataList("setUp");
 	}
@@ -87,7 +87,7 @@ public class DataListTest {
 			fail(e.getMessage());
 		}
 
-		if (this.content.equals(con)) {
+		if (!this.content.equals(con)) {
 			fail("content as String doesn't work");
 		}
 

@@ -37,6 +37,10 @@ public class DefaultServlet extends HttpServlet {
 
 		String content = request.getParameter("message");
 
+		if (content == null) {
+			return;
+		}
+
 		PrintWriter writer = response.getWriter();
 
 		writer.println("<html>");

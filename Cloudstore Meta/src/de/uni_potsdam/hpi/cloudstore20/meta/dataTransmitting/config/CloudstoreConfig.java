@@ -16,7 +16,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	private int k;
 	private int m;
 
-	private boolean loadFromServer = false;
+	private boolean loadFromServer = true;
 
 	public CloudstoreConfig(String content) throws DataTransmittingException {
 
