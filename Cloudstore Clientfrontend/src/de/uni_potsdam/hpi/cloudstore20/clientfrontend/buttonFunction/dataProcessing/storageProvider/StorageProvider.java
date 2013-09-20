@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider;
 
 import java.io.File;
 
@@ -61,12 +61,12 @@ public abstract class StorageProvider {
 
 	}
 
-	protected abstract String uploadFile(File file) throws StorageProviderException;
+	public abstract String uploadFile(File file) throws StorageProviderException;
 
-	protected abstract File downloadFile(String fileID) throws StorageProviderException;
+	public abstract File downloadFile(String fileID) throws StorageProviderException;
 
-	protected abstract void deleteFile(String fileID) throws StorageProviderException;
-	
-	protected abstract String getFileHash(String fileID) throws StorageProviderException;
+	public abstract void deleteFile(String fileID) throws StorageProviderException;
+
+	public abstract String getFileHash(String fileID) throws StorageProviderException;
 
 }

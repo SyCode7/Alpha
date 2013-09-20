@@ -8,8 +8,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.ButtonThread;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ReflectionException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.Reflector;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
@@ -27,8 +30,12 @@ public class DataProcessor {
 
 	private List<DataProcessorUpdateInterface> toInform = new LinkedList<DataProcessorUpdateInterface>();
 	private Map<File, CloudstoreConfig> workingList = new HashMap<File, CloudstoreConfig>();
+	private Entry<File, CloudstoreConfig> currentJob = null;
+	private DataProcessElement dpe = null;
+	private DATA_PROCESS_METHOD dpm = null;
 	private List<DataProcessTask> doneWork = new LinkedList<DataProcessTask>();
 	private boolean blockWorkingList = false;
+	private boolean blockDoneList = false;
 	private ButtonThread worker;
 
 	public void addToNoticeList(DataProcessorUpdateInterface clazz) {
@@ -39,13 +46,13 @@ public class DataProcessor {
 
 	public void addNewTask(File toUpload, CloudstoreConfig configUsed) {
 
-		this.waitForFreeList();
-
+		this.waitForFreeWorkingList();
 		this.blockWorkingList = true;
 		this.workingList.put(toUpload, configUsed);
 		this.blockWorkingList = false;
+
 		try {
-			if (!this.worker.isRunning()) {
+			if (this.worker == null || !this.worker.isRunning()) {
 				this.processFile();
 			}
 		} catch (CloudstoreException e) {
@@ -55,9 +62,19 @@ public class DataProcessor {
 
 	}
 
-	private void waitForFreeList() {
+	private void waitForFreeWorkingList() {
 
 		while (this.blockWorkingList) {
+			try {
+				Thread.sleep(50l);
+			} catch (InterruptedException e) {}
+		}
+
+	}
+
+	private void waitForFreeDoneList() {
+
+		while (this.blockDoneList) {
 			try {
 				Thread.sleep(50l);
 			} catch (InterruptedException e) {}
@@ -79,39 +96,61 @@ public class DataProcessor {
 		};
 		this.worker.start();
 
-		try {
-			while (this.worker.isRunning()) {
+		ButtonThread bt = new ButtonThread() {
+
+			@Override
+			protected void doTask() throws CloudstoreException {
+
 				try {
-					Thread.sleep(1000l);
-				} catch (InterruptedException e) {}
-				this.updateAll();
+					while (worker.isRunning()) {
+						try {
+							Thread.sleep(250l);
+						} catch (InterruptedException e) {}
+						updateAll();
+					}
+				} catch (CloudstoreException e) {
+					// TODO Innerhalb des Runners ist ein Fehler aufgetretten. Hier muss nen DICKES handling hin!
+					e.printStackTrace();
+				}
 			}
-		} catch (CloudstoreException e) {
-			// TODO Innerhalb des Runners ist ein Fehler aufgetretten. Hier muss nen DICKES handling hin!
-			e.printStackTrace();
-		}
+		};
+		bt.start();
 
 	}
 
 	private void doProcessing() throws DataProcessingException {
 
-		Entry<File, CloudstoreConfig> entry = null;
-		while ((entry = this.getNextTask()) != null) {
+		while ((this.currentJob = this.getNextTask()) != null) {
 
-			DataProcessTask dpt = new DataProcessTask(entry.getKey());
+			DataProcessTask dpt = new DataProcessTask(this.currentJob.getKey());
 
-			for (DATA_PROCESS_METHOD dpm : entry.getValue().getMethods()) {
-
-				Object[] param = { entry.getValue() };
+			// TODO: Die richtigen Provider auslesen
+			for (int i = 0; i < 6; i++) {
 				try {
-					DataProcessElement dpe = (DataProcessElement) Reflector.reflectClass(
-							(DataProcessor.packageName + dpm.getClassName()), param);
-					dpe.doProcessing(dpt);
+					dpt.addProviderFileContainer(new ProviderFileContainer(new MockupStorageProvider()));
+				} catch (ServletCommunicationException | StorageProviderException e) {
+					e.printStackTrace();
+				}
+			}
+
+			for (DATA_PROCESS_METHOD dpm : this.currentJob.getValue().getMethods()) {
+
+				this.dpm = dpm;
+
+				Object[] param = { this.currentJob.getValue() };
+				try {
+					this.dpe = (DataProcessElement) Reflector.reflectClass((DataProcessor.packageName + dpm.getClassName()),
+							param);
+					this.dpe.doProcessing(dpt);
 				} catch (ReflectionException e) {
 					throw new DataProcessingException(e.getMessage(), e.getCause());
 				}
 			}
 
+			this.waitForFreeDoneList();
+			this.blockDoneList = true;
+			this.doneWork.add(dpt);
+			this.blockDoneList = false;
 		}
 
 	}
@@ -127,7 +166,9 @@ public class DataProcessor {
 				break;
 			}
 		}
-		this.workingList.remove(entry.getKey());
+		if (entry != null) {
+			this.workingList.remove(entry.getKey());
+		}
 		this.blockWorkingList = false;
 
 		return entry;
@@ -141,4 +182,59 @@ public class DataProcessor {
 		}
 
 	}
+
+	public DATA_PROCESS_METHOD getCurrentMethod() {
+
+		return this.dpm;
+
+	}
+
+	public int getCurrentStatus() {
+		
+		if (this.dpe == null) {
+			return 0;
+		}
+
+		return this.dpe.getStatus();
+	}
+
+	public String getCurrentFile() {
+
+		if (this.currentJob == null) {
+			return "";
+		}
+
+		File f = this.currentJob.getKey();
+
+		return f.getName();
+	}
+
+	public List<String> getDoneWork() {
+
+		this.waitForFreeDoneList();
+		this.blockDoneList = true;
+
+		List<String> copy = new LinkedList<String>();
+		for (DataProcessTask dpt : this.doneWork) {
+			copy.add(dpt.getOriginalFile().getName());
+		}
+
+		this.blockDoneList = false;
+		return copy;
+	}
+
+	public List<String> getWorkList() {
+
+		this.waitForFreeWorkingList();
+		this.blockWorkingList = true;
+
+		List<String> copy = new LinkedList<String>();
+		for (Entry<File, CloudstoreConfig> entry : this.workingList.entrySet()) {
+			copy.add(entry.getKey().getName());
+		}
+
+		this.blockWorkingList = false;
+		return copy;
+	}
+
 }

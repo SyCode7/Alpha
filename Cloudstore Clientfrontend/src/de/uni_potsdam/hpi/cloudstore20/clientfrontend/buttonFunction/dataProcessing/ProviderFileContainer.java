@@ -4,15 +4,18 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicator;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.StorageProvider;
 
 public class ProviderFileContainer {
 
 	private List<File> files = new LinkedList<File>();
 	private StorageProvider provider;
 	private long speed = 0;
+	private long startTimeUpload = 0;
+	private boolean finishedUpload = false;
 
 	public ProviderFileContainer(StorageProvider provider) throws ServletCommunicationException {
 
@@ -105,6 +108,43 @@ public class ProviderFileContainer {
 		}
 
 		return pfc;
+	}
+
+	public void uploadData() {
+
+		this.startTimeUpload = System.currentTimeMillis();
+
+		for (File f : this.files) {
+			try {
+				this.provider.uploadFile(f);
+			} catch (StorageProviderException e) {
+				// TODO EXCEPTIONHANDLING!!!!!
+				e.printStackTrace();
+			}
+		}
+
+		this.finishedUpload = true;
+
+	}
+
+	public int getStatus() {
+
+		// TODO: im provider gibt es auch noch einen status, evtl bessere möglichkeit fortschritte zu erkennen, indem man über die
+		// größe der datei und dem bereits fortschrit geht...
+
+		long time = System.currentTimeMillis() - this.startTimeUpload;
+
+		int done = (int) (time / this.getUploadTimeForFileList() * 100);
+
+		if (this.finishedUpload) {
+			return 100;
+		} else {
+			if (done >= 100) {
+				return 99;
+			} else {
+				return done;
+			}
+		}
 	}
 
 }

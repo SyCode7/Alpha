@@ -20,4 +20,11 @@ public class PreChunking extends DataProcessElement {
 		return task;
 	}
 
+	@Override
+	public int getStatus() {
+
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

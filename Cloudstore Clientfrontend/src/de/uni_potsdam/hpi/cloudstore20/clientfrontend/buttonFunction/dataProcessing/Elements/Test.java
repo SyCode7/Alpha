@@ -19,4 +19,10 @@ public class Test extends DataProcessElement {
 
 	}
 
+	@Override
+	public int getStatus() {
+
+		return ((int) (Math.random() * 100));
+	}
+
 }

@@ -47,4 +47,10 @@ public class DataProcessTask {
 		this.providerAndFiles.add(pfc);
 	}
 
+	public List<ProviderFileContainer> getProviderFileListForUploading() {
+
+		return this.providerAndFiles;
+
+	}
+
 }

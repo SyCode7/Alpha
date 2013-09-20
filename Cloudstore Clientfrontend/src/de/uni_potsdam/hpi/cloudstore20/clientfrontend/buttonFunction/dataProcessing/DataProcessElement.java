@@ -8,6 +8,8 @@ public abstract class DataProcessElement {
 
 	public abstract DataProcessTask doProcessing(DataProcessTask task) throws DataProcessingException;
 
+	public abstract int getStatus();
+
 	public DataProcessElement(CloudstoreConfig config) {
 
 		this.config = config;

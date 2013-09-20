@@ -9,7 +9,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -18,18 +18,30 @@ import org.eclipse.swt.widgets.TabItem;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 
 public class UploadTab extends TabElement {
 
 	protected File selectedFile = null;
 	protected List fileList;
 	protected ProgressBar progressbar;
+	private Label lblStatus;
+	private DataProcessor currentContentInProgress;
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public UploadTab(TabFolder tabFolder, DefaultWindow window) {
 
 		super(tabFolder, window);
+
+		DataProcessor.getInstance().addToNoticeList(this);
 	}
 
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	@Override
 	protected void createContent() {
 
@@ -53,7 +65,7 @@ public class UploadTab extends TabElement {
 			@Override
 			public void mouseUp(MouseEvent e) {
 
-				DirectoryDialog dialog = new DirectoryDialog(window.shell);
+				FileDialog dialog = new FileDialog(window.shell);
 				String path = dialog.open();
 				if (path == null) {
 					path = "";
@@ -69,9 +81,10 @@ public class UploadTab extends TabElement {
 
 				} else if (f.isFile()) {
 					selectedFile = f;
-					fileList.add(f.getName());
-
 				}
+
+				// TODO: Config auslesen
+				DataProcessor.getInstance().addNewTask(selectedFile, CloudstoreConfig.loadDefault());
 
 			}
 		});
@@ -87,17 +100,9 @@ public class UploadTab extends TabElement {
 
 		progressbar = new ProgressBar(sashForm_3, SWT.SMOOTH);
 
-		Label lblStatus = new Label(sashForm_3, SWT.NONE);
-		lblStatus.setText("Erasure - Encoding");
+		lblStatus = new Label(sashForm_3, SWT.NONE);
+		lblStatus.setText("");
 		sashForm_3.setWeights(new int[] { 30, 20, 200, 30, 20 });
-		progressbar.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseUp(MouseEvent e) {
-
-				progressbar.setSelection((int) (Math.random() * 100));
-			}
-		});
 
 		Browser browser = new Browser(sashForm_2, SWT.NONE);
 		browser.setUrl("maps.google.com");
@@ -111,8 +116,33 @@ public class UploadTab extends TabElement {
 	@Override
 	public void updateContent(DataProcessor content) {
 
-		// TODO Auto-generated method stub
-		
+		this.currentContentInProgress = content;
+		DefaultWindow.updateContent();
+
 	}
-	
+
+	@Override
+	protected void performContentUpdate() {
+		
+		String file = this.currentContentInProgress.getCurrentFile();
+		DATA_PROCESS_METHOD dpm = this.currentContentInProgress.getCurrentMethod();
+		if (dpm != null) {
+			String description = dpm.getShortDescription();
+			this.lblStatus.setText(file + "\t" + description);
+		}
+		this.progressbar.setSelection(this.currentContentInProgress.getCurrentStatus());
+
+		this.fileList.removeAll();
+		for (String s : this.currentContentInProgress.getWorkList()) {
+			this.fileList.add(s);
+		}
+		this.fileList.add("");
+		this.fileList.add(file);
+		this.fileList.add("");
+		for (String s : this.currentContentInProgress.getDoneWork()) {
+			this.fileList.add(s);
+		}
+
+	}
+
 }

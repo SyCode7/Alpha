@@ -8,7 +8,6 @@ public abstract class ButtonThread extends Thread {
 
 	public ButtonThread() {
 
-		this.run();
 	}
 
 	public void run() {

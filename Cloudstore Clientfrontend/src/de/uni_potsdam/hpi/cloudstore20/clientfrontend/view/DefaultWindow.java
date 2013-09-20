@@ -1,5 +1,8 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseAdapter;
@@ -20,6 +23,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.BackupConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.DataListTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.MapTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.ProviderConfigTab;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
@@ -27,8 +31,9 @@ import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreCo
 public class DefaultWindow {
 
 	public Shell shell;
-	private Display display;
+	private static Display display;
 	private TabFolder tabFolder;
+	private static List<TabElement> tabsToUpdate = new LinkedList<TabElement>();
 
 	public CloudstoreConfig config;
 
@@ -58,7 +63,7 @@ public class DefaultWindow {
 	 */
 	public void open() {
 
-		this.display = Display.getDefault();
+		DefaultWindow.display = Display.getDefault();
 		createContents();
 		this.shell.open();
 		this.shell.layout();
@@ -78,7 +83,7 @@ public class DefaultWindow {
 		/*
 		 * Hier können Systemleisten u.a. ausgeschaltet werden
 		 */
-		this.shell = new Shell(this.display, SWT.NO_TRIM | SWT.ON_TOP);
+		this.shell = new Shell(DefaultWindow.display, SWT.NO_TRIM | SWT.ON_TOP);
 
 		this.shell.setSize(643, 447);
 		this.shell.setText("Cloudstore 2.0");
@@ -148,17 +153,17 @@ public class DefaultWindow {
 
 	private void loadTabElements() {
 
-		new DataListTab(tabFolder, this);
+		DefaultWindow.tabsToUpdate.add(new DataListTab(tabFolder, this));
 
-		new MapTab(tabFolder, this);
+		DefaultWindow.tabsToUpdate.add(new MapTab(tabFolder, this));
 
-		new ProviderConfigTab(tabFolder, this);
+		DefaultWindow.tabsToUpdate.add(new ProviderConfigTab(tabFolder, this));
 
-		new BackupConfigTab(tabFolder, this);
+		DefaultWindow.tabsToUpdate.add(new BackupConfigTab(tabFolder, this));
 
-		new UploadTab(tabFolder, this);
+		DefaultWindow.tabsToUpdate.add(new UploadTab(tabFolder, this));
 
-		new UploadConfigTab(tabFolder, this);
+		DefaultWindow.tabsToUpdate.add(new UploadConfigTab(tabFolder, this));
 
 		this.createOnly4DesignTabContent();
 	}
@@ -168,6 +173,21 @@ public class DefaultWindow {
 		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
 		tbtmUpload.setText("Only4Designer");
 
+	}
+
+	public static void updateContent() {
+
+		DefaultWindow.display.syncExec(new Thread() {
+
+			public void run() {
+
+				for (TabElement tab : DefaultWindow.tabsToUpdate) {
+					tab.updateContent();
+				}
+
+			}
+
+		});
 	}
 
 }

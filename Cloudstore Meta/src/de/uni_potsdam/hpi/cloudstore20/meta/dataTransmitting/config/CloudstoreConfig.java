@@ -117,7 +117,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 
 		List<DATA_PROCESS_METHOD> methods = new LinkedList<DATA_PROCESS_METHOD>();
 		methods.add(DATA_PROCESS_METHOD.erasure);
-		methods.add(DATA_PROCESS_METHOD.uploadOptimization);
+		methods.add(DATA_PROCESS_METHOD.upload);
 
 		CloudstoreConfig cc = null;
 		try {

@@ -20,4 +20,11 @@ public abstract class TabElement implements DataProcessorUpdateInterface {
 
 	protected abstract void createContent();
 
+	public void updateContent() {
+
+		this.performContentUpdate();
+	}
+
+	protected abstract void performContentUpdate();
+
 }

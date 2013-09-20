@@ -1,12 +1,12 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.implementations;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations;
 
 import java.io.File;
 import java.io.IOException;
 
 import com.google.common.io.Files;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.StorageProvider;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.StorageProviderException;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.HelperException;
 
@@ -62,7 +62,7 @@ public class MockupStorageProvider extends StorageProvider {
 		for (int i = 0; i < 100; i++) {
 			try {
 				this.updateProcessStatus(i);
-				Thread.sleep(600);
+				Thread.sleep(30);
 			} catch (InterruptedException e) {}
 		}
 		this.updateProcessStatus(100);
@@ -97,7 +97,7 @@ public class MockupStorageProvider extends StorageProvider {
 	}
 
 	@Override
-	protected String getFileHash(String fileID) throws StorageProviderException {
+	public String getFileHash(String fileID) throws StorageProviderException {
 
 		File currentFile = new File(fileID);
 
