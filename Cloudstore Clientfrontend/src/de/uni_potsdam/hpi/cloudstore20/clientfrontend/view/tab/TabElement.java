@@ -2,9 +2,10 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab;
 
 import org.eclipse.swt.widgets.TabFolder;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessorUpdateInterface;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 
-public abstract class TabElement {
+public abstract class TabElement implements DataProcessorUpdateInterface {
 
 	protected TabFolder tabFolder;
 	protected DefaultWindow window;
@@ -18,7 +19,5 @@ public abstract class TabElement {
 	}
 
 	protected abstract void createContent();
-
-	public abstract void updateContent();
 
 }

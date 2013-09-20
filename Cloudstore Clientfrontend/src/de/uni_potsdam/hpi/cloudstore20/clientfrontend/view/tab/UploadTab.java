@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 
 public class UploadTab extends TabElement {
@@ -108,7 +109,7 @@ public class UploadTab extends TabElement {
 	}
 
 	@Override
-	public void updateContent() {
+	public void updateContent(DataProcessor content) {
 
 		// TODO Auto-generated method stub
 		

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicator;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
@@ -161,7 +162,7 @@ public class DataListTab extends TabElement {
 	}
 
 	@Override
-	public void updateContent() {
+	public void updateContent(DataProcessor content) {
 
 		// TODO Auto-generated method stub
 		
