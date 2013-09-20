@@ -59,8 +59,15 @@ public class UploadConfigTab extends TabElement {
 
 		sashForm_7.setWeights(new int[] { 1, 1, 1, 1, 1, 1 });
 
-		Composite composite_2 = new Composite(sashForm_5, SWT.NONE);
+		new Composite(sashForm_5, SWT.NONE);
 		sashForm_5.setWeights(new int[] { 1, 1, 1 });
+	}
+
+	@Override
+	public void updateContent() {
+
+		// TODO Auto-generated method stub
+
 	}
 
 }

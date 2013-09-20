@@ -28,7 +28,7 @@ public class ProviderConfigTab extends TabElement {
 		SashForm sashForm_1 = new SashForm(this.tabFolder, SWT.VERTICAL);
 		tbtmProviderKonf.setControl(sashForm_1);
 
-		Composite composite = new Composite(sashForm_1, SWT.NONE);
+		new Composite(sashForm_1, SWT.NONE);
 
 		SashForm sashForm_3 = new SashForm(sashForm_1, SWT.NONE);
 
@@ -56,11 +56,18 @@ public class ProviderConfigTab extends TabElement {
 		btnProvider.setText("Provider updaten");
 		sashForm_4.setWeights(new int[] { 1, 1, 1, 1, 1, 1, 1, 1 });
 
-		Composite composite_1 = new Composite(sashForm_3, SWT.NONE);
+		new Composite(sashForm_3, SWT.NONE);
 		sashForm_3.setWeights(new int[] { 1, 1 });
 
-		Composite composite_3 = new Composite(sashForm_1, SWT.NONE);
+		new Composite(sashForm_1, SWT.NONE);
 		sashForm_1.setWeights(new int[] { 16, 302, 31 });
+
+	}
+
+	@Override
+	public void updateContent() {
+
+		// TODO Auto-generated method stub
 
 	}
 

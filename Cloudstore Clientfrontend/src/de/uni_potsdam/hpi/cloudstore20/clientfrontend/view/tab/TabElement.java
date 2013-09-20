@@ -19,4 +19,6 @@ public abstract class TabElement {
 
 	protected abstract void createContent();
 
+	public abstract void updateContent();
+
 }

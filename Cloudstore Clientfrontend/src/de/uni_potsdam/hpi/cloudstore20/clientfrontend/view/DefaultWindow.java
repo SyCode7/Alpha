@@ -94,9 +94,6 @@ public class DefaultWindow {
 
 		this.loadTabElements();
 
-		TabItem tbtmOnlydesigner = new TabItem(tabFolder, SWT.NONE);
-		tbtmOnlydesigner.setText("Only4Designer");
-
 		this.closeButton(sashForm);
 
 		this.loginButton(sashForm);
@@ -162,6 +159,14 @@ public class DefaultWindow {
 		new UploadTab(tabFolder, this);
 
 		new UploadConfigTab(tabFolder, this);
+
+		this.createOnly4DesignTabContent();
+	}
+
+	private void createOnly4DesignTabContent() {
+
+		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
+		tbtmUpload.setText("Only4Designer");
 
 	}
 

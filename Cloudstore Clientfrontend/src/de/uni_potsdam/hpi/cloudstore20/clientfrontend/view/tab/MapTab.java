@@ -26,4 +26,11 @@ public class MapTab extends TabElement {
 
 	}
 
+	@Override
+	public void updateContent() {
+
+		// TODO Auto-generated method stub
+		
+	}
+
 }

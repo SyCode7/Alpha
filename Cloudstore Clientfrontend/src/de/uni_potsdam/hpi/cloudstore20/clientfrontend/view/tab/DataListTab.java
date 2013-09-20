@@ -160,4 +160,11 @@ public class DataListTab extends TabElement {
 		tree.getItems()[0].setExpanded(true);
 	}
 
+	@Override
+	public void updateContent() {
+
+		// TODO Auto-generated method stub
+		
+	}
+
 }
