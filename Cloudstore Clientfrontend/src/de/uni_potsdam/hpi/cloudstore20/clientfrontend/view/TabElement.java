@@ -1,12 +1,10 @@
-package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab;
+package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view;
 
 import org.eclipse.swt.widgets.TabFolder;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessorUpdateInterface;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 
-public abstract class TabElement implements DataProcessorUpdateInterface {
+public abstract class TabElement {
 
 	protected TabFolder tabFolder;
 	protected DefaultWindow window;

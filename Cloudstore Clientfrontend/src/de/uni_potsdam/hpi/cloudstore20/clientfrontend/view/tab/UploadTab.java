@@ -22,6 +22,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.helper.UploadProgressbarContainer;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
@@ -32,7 +33,6 @@ public class UploadTab extends TabElement {
 	private List doneFileList;
 	private ProgressBar progressbar;
 	private Label lblStatus;
-	private DataProcessor currentContentInProgress;
 	private LinkedList<UploadProgressbarContainer> uploadBars = new LinkedList<UploadProgressbarContainer>();
 	private SashForm sashForm_progressBars;
 	private SashForm sashForm_UploadProgressBars;
@@ -43,7 +43,6 @@ public class UploadTab extends TabElement {
 
 		super(tabFolder, window);
 
-		DataProcessor.getInstance().addToNoticeList(this);
 	}
 
 	@Override
@@ -146,18 +145,10 @@ public class UploadTab extends TabElement {
 	}
 
 	@Override
-	public void updateContent(DataProcessor content) {
-
-		this.currentContentInProgress = content;
-		DefaultWindow.updateContent();
-
-	}
-
-	@Override
 	protected void performContentUpdate() throws DataProcessingException {
 
-		String file = this.currentContentInProgress.getCurrentFile();
-		DATA_PROCESS_METHOD dpm = this.currentContentInProgress.getCurrentMethod();
+		String file = DataProcessor.getInstance().getCurrentFile();
+		DATA_PROCESS_METHOD dpm = DataProcessor.getInstance().getCurrentMethod();
 		if (dpm != null) {
 			String description = dpm.getShortDescription();
 			this.lblStatus.setText(file + "\t" + description);
@@ -176,11 +167,11 @@ public class UploadTab extends TabElement {
 		if (!this.lastFile.equals(file)) {
 
 			this.todoFileList.removeAll();
-			for (String s : this.currentContentInProgress.getWorkList()) {
+			for (String s : DataProcessor.getInstance().getWorkList()) {
 				this.todoFileList.add(s);
 			}
 			this.doneFileList.removeAll();
-			for (String s : this.currentContentInProgress.getDoneWork()) {
+			for (String s : DataProcessor.getInstance().getDoneWork()) {
 				this.doneFileList.add(s);
 			}
 		}
@@ -202,7 +193,7 @@ public class UploadTab extends TabElement {
 
 		} else {
 
-			this.progressbar.setSelection(this.currentContentInProgress.getCurrentStatus());
+			this.progressbar.setSelection(DataProcessor.getInstance().getCurrentStatus());
 		}
 
 		this.setOneProgressbar(!upload);
@@ -217,7 +208,7 @@ public class UploadTab extends TabElement {
 		}
 		this.uploadBars.clear();
 
-		for (StorageProvider sp : this.currentContentInProgress.getCurrentProvider()) {
+		for (StorageProvider sp : DataProcessor.getInstance().getCurrentProvider()) {
 
 			ProgressBar bar = new ProgressBar(sashForm_UploadProgressBars, SWT.SMOOTH);
 

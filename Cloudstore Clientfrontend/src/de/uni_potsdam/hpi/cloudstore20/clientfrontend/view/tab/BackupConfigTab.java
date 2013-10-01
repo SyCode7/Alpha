@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 
 public class BackupConfigTab extends TabElement {
 
@@ -88,13 +88,6 @@ public class BackupConfigTab extends TabElement {
 
 		new Composite(sashForm_1, SWT.NONE);
 		sashForm_1.setWeights(new int[] { 36, 16, 16, 16, 16, 32, 16, 24, 159 });
-
-	}
-
-	@Override
-	public void updateContent(DataProcessor content) {
-
-		// TODO Auto-generated method stub
 
 	}
 

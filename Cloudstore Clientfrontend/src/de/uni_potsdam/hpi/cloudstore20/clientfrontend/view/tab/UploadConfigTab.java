@@ -9,8 +9,8 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 
 public class UploadConfigTab extends TabElement {
 
@@ -62,13 +62,6 @@ public class UploadConfigTab extends TabElement {
 
 		new Composite(sashForm_5, SWT.NONE);
 		sashForm_5.setWeights(new int[] { 1, 1, 1 });
-	}
-
-	@Override
-	public void updateContent(DataProcessor content) {
-
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

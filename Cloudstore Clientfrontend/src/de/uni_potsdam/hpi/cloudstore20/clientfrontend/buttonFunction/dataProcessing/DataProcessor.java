@@ -30,7 +30,6 @@ public class DataProcessor {
 
 	private static String packageName = "de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.";
 
-	private List<DataProcessorUpdateInterface> toInform = new LinkedList<DataProcessorUpdateInterface>();
 	private Map<File, CloudstoreConfig> workingList = new HashMap<File, CloudstoreConfig>();
 	private Entry<File, CloudstoreConfig> currentJob = null;
 	private DataProcessElement dpe = null;
@@ -39,12 +38,6 @@ public class DataProcessor {
 	private boolean blockWorkingList = false;
 	private boolean blockDoneList = false;
 	private ButtonThread worker;
-
-	public void addToNoticeList(DataProcessorUpdateInterface clazz) {
-
-		this.toInform.add(clazz);
-
-	}
 
 	public DataProcessTask getDoneTask(File toFind) {
 
@@ -154,26 +147,6 @@ public class DataProcessor {
 		};
 		this.worker.start();
 
-		ButtonThread bt = new ButtonThread() {
-
-			@Override
-			protected void doTask() throws CloudstoreException {
-
-				try {
-					while (worker.isRunning()) {
-						try {
-							Thread.sleep(250l);
-						} catch (InterruptedException e) {}
-						updateAll();
-					}
-				} catch (CloudstoreException e) {
-					// TODO Innerhalb des Runners ist ein Fehler aufgetretten. Hier muss nen DICKES handling hin!
-					e.printStackTrace();
-				}
-			}
-		};
-		bt.start();
-
 	}
 
 	private void doProcessing() throws DataProcessingException {
@@ -230,14 +203,6 @@ public class DataProcessor {
 		this.blockWorkingList = false;
 
 		return entry;
-
-	}
-
-	private void updateAll() {
-
-		for (DataProcessorUpdateInterface dpui : this.toInform) {
-			dpui.updateContent(this);
-		}
 
 	}
 

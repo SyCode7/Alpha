@@ -22,7 +22,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.BackupConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.DataListTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.MapTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.ProviderConfigTab;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
@@ -34,6 +33,7 @@ public class DefaultWindow {
 	private static Display display;
 	private TabFolder tabFolder;
 	private static LinkedList<TabElement> tabsToUpdate = new LinkedList<TabElement>();
+	private long updatingIntervall = 100l;
 
 	public CloudstoreConfig config;
 
@@ -64,7 +64,8 @@ public class DefaultWindow {
 	public void open() {
 
 		DefaultWindow.display = Display.getDefault();
-		createContents();
+		this.createContents();
+		this.startContentUpdater();
 		this.shell.open();
 		this.shell.layout();
 		while (!this.shell.isDisposed()) {
@@ -175,24 +176,38 @@ public class DefaultWindow {
 
 	}
 
-	public static void updateContent() {
+	private void startContentUpdater() {
 
-		DefaultWindow.display.syncExec(new Thread() {
+		Thread t = new Thread() {
 
+			@Override
 			public void run() {
 
-				for (TabElement tab : DefaultWindow.tabsToUpdate) {
+				while (true) {
 					try {
-						tab.updateContent();
-					} catch (CloudstoreException e) {
-						// TODO POPUP wegen fehlermeldung
-						e.printStackTrace();
-					}
+						Thread.sleep(updatingIntervall);
+					} catch (InterruptedException e1) {}
+
+					DefaultWindow.display.syncExec(new Thread() {
+
+						public void run() {
+
+							for (TabElement tab : DefaultWindow.tabsToUpdate) {
+								try {
+									tab.updateContent();
+								} catch (CloudstoreException e) {
+									// TODO POPUP wegen fehlermeldung
+									// Das Popup darf auch nur einmal kommen und am besten muss die refreshingRoutine pausieren
+									e.printStackTrace();
+								}
+							}
+						}
+					});
 				}
-
 			}
+		};
+		t.start();
 
-		});
 	}
 
 }
