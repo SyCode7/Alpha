@@ -51,11 +51,11 @@ public class UploadConfigTab extends TabElement {
 		Scale scaleAusf = new Scale(sashForm_7, SWT.NONE);
 
 		Label lblKosten = new Label(sashForm_7, SWT.NONE);
-		lblAusf.setText("Kosten");
+		lblKosten.setText("Kosten");
 		Scale scaleKosten = new Scale(sashForm_7, SWT.NONE);
 
 		Label lblGeschw = new Label(sashForm_7, SWT.NONE);
-		lblAusf.setText("Geschwindigkeit");
+		lblGeschw.setText("Geschwindigkeit");
 		Scale scaleGeschw = new Scale(sashForm_7, SWT.NONE);
 
 		sashForm_7.setWeights(new int[] { 1, 1, 1, 1, 1, 1 });

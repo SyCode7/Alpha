@@ -13,10 +13,13 @@ import de.uni_potsdam.hpi.cloudstore20.meta.helper.HelperException;
 public class MockupStorageProvider extends StorageProvider {
 
 	private File workingDir;
+	private long sleepingTime = 30l;
+	private double delayFactor = (Math.random() * 1.5) + 0.5;
+	private long finalSleepingTime = (long) (this.sleepingTime * this.delayFactor);
 
 	public MockupStorageProvider() throws StorageProviderException {
 
-		super("Mockup");
+		super("Mockup" + System.currentTimeMillis());
 
 		try {
 			Thread.sleep(500);
@@ -62,7 +65,7 @@ public class MockupStorageProvider extends StorageProvider {
 		for (int i = 0; i < 100; i++) {
 			try {
 				this.updateProcessStatus(i);
-				Thread.sleep(30);
+				Thread.sleep(this.finalSleepingTime);
 			} catch (InterruptedException e) {}
 		}
 		this.updateProcessStatus(100);

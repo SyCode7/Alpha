@@ -1,5 +1,6 @@
 package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,9 +9,11 @@ import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingExc
 
 public class CloudstoreConfig extends DataTransmittingClass {
 
-	private enum CloudstoreConfigElements {
-		dataProcessConfig, erasureConfig;
-	}
+	private static final long serialVersionUID = -6408120828047873381L;
+
+	// private enum CloudstoreConfigElements {
+	// dataProcessConfig, erasureConfig;
+	// }
 
 	private List<DATA_PROCESS_METHOD> methods = new LinkedList<DATA_PROCESS_METHOD>();
 	private int k;
@@ -18,68 +21,22 @@ public class CloudstoreConfig extends DataTransmittingClass {
 
 	private boolean loadFromServer = true;
 
-	public CloudstoreConfig(String content) throws DataTransmittingException {
+	private CloudstoreConfig(List<DATA_PROCESS_METHOD> methods, int k, int m) {
 
-		super(content);
-		this.parseContent(content);
-	}
-
-	private CloudstoreConfig(List<DATA_PROCESS_METHOD> methods, int k, int m) throws DataTransmittingException {
-
-		super("");
-
-		this.m = m;
-		this.k = k;
 		this.methods = methods;
-	}
-
-	private void parseContent(String content) {
-
-		String[] elements = content.split("###");
-		for (String element : elements) {
-
-			String temp = element.split("+++")[1].split("---")[0];
-			if (element.startsWith(CloudstoreConfigElements.dataProcessConfig.toString())) {
-
-				for (String methodString : temp.split("#")) {
-					for (DATA_PROCESS_METHOD method : DATA_PROCESS_METHOD.values()) {
-						if (method.toString().equals(methodString)) {
-							this.methods.add(method);
-							break;
-						}
-					}
-
-				}
-
-			} else if (element.startsWith(CloudstoreConfigElements.erasureConfig.toString())) {
-				this.k = Integer.valueOf(temp.split(":")[0]);
-				this.m = Integer.valueOf(temp.split(":")[1]);
-			}
-		}
-
+		this.k = k;
+		this.m = m;
 	}
 
 	@Override
 	public String getClassAsString() throws DataTransmittingException {
 
-		StringBuilder content = new StringBuilder();
-
-		content.append(CloudstoreConfigElements.dataProcessConfig).append("+++");
-		boolean first = true;
-		for (DATA_PROCESS_METHOD dpm : this.methods) {
-			if (first) {
-				first = false;
-				content.append(dpm);
-				continue;
-			}
-			content.append("#").append(dpm);
+		try {
+			return DataTransmittingClass.toString(this);
+		} catch (IOException e) {
+			throw new DataTransmittingException(e.getMessage(), e.getCause());
 		}
-		content.append("---");
 
-		content.append("###").append(CloudstoreConfigElements.erasureConfig).append("+++").append(this.k).append(":")
-				.append(this.m).append("---");
-
-		return content.toString();
 	}
 
 	public List<DATA_PROCESS_METHOD> getMethods() {
@@ -119,13 +76,14 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		methods.add(DATA_PROCESS_METHOD.erasure);
 		methods.add(DATA_PROCESS_METHOD.upload);
 
-		CloudstoreConfig cc = null;
-		try {
-			cc = new CloudstoreConfig(methods, 4, 2);
-		} catch (DataTransmittingException e) {}
+		return new CloudstoreConfig(methods, 4, 2);
 
-		return cc;
+	}
 
+	public long getSlicingNumber() {
+
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

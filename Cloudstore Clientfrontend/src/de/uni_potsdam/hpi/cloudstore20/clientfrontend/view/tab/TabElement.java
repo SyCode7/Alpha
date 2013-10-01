@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessorUpdateInterface;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 
 public abstract class TabElement implements DataProcessorUpdateInterface {
 
@@ -20,11 +21,11 @@ public abstract class TabElement implements DataProcessorUpdateInterface {
 
 	protected abstract void createContent();
 
-	public void updateContent() {
+	public void updateContent() throws CloudstoreException {
 
 		this.performContentUpdate();
 	}
 
-	protected abstract void performContentUpdate();
+	protected abstract void performContentUpdate() throws CloudstoreException;
 
 }
