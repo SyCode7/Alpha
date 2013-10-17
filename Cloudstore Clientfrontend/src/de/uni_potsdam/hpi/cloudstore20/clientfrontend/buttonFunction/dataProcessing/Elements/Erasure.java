@@ -1,6 +1,7 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +31,11 @@ public class Erasure extends DataProcessElement {
 		int i = 0;
 		for (ProviderFileContainer pfc : task.getProviderFileListFor(DATA_PROCESS_METHOD.erasure)) {
 			File f_ = new File(System.getProperty("java.io.tmpdir") + "tempFile" + i);
+			File f__ = null;
+			try {
+				f__ = File.createTempFile("tempFile" + i, ".temp");
+			} catch (IOException e) {}
+			f__.deleteOnExit();
 			FileHelper.generateRandomContentFile(f_.getAbsolutePath(), f.length() / 6);
 			pfc.addFile(f_);
 			i++;
