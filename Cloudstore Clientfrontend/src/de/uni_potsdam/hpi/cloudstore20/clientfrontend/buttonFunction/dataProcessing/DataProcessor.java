@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.ButtonThread;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.Upload;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ReflectionException;
@@ -28,7 +30,6 @@ public class DataProcessor {
 
 	private static String packageName = "de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.";
 
-	private List<DataProcessorUpdateInterface> toInform = new LinkedList<DataProcessorUpdateInterface>();
 	private Map<File, CloudstoreConfig> workingList = new HashMap<File, CloudstoreConfig>();
 	private Entry<File, CloudstoreConfig> currentJob = null;
 	private DataProcessElement dpe = null;
@@ -38,9 +39,59 @@ public class DataProcessor {
 	private boolean blockDoneList = false;
 	private ButtonThread worker;
 
-	public void addToNoticeList(DataProcessorUpdateInterface clazz) {
+	public DataProcessTask getDoneTask(File toFind) {
 
-		this.toInform.add(clazz);
+		DataProcessTask dpt = null;
+
+		// Task ist noch in abzuarbeitender Liste
+		boolean inWorkingList;
+		do {
+
+			inWorkingList = false;
+
+			this.waitForFreeWorkingList();
+			this.blockWorkingList = true;
+			for (File f : this.workingList.keySet()) {
+				if (f.getAbsolutePath().equals(toFind.getAbsolutePath())) {
+					inWorkingList = true;
+				}
+			}
+			this.blockWorkingList = false;
+
+			if (inWorkingList) {
+				try {
+					Thread.sleep(100l);
+				} catch (InterruptedException e) {}
+			}
+
+		} while (inWorkingList);
+
+		// Job wird gerade bearbeitet
+		boolean equals = false;
+		while (!equals) {
+
+			if (this.currentJob == null) {
+				break;
+			}
+			equals = this.currentJob.getKey().getAbsolutePath().equals(toFind.getAbsolutePath());
+
+			try {
+				Thread.sleep(100l);
+			} catch (InterruptedException e) {}
+		}
+
+		// Job aus abgearbeiteter Liste raussuchen
+		this.waitForFreeDoneList();
+		for (DataProcessTask dpt_ : this.doneWork) {
+
+			if (dpt_.getOriginalFile().getAbsolutePath().equals(toFind.getAbsolutePath())) {
+				dpt = dpt_;
+				break;
+			}
+
+		}
+
+		return dpt;
 
 	}
 
@@ -96,26 +147,6 @@ public class DataProcessor {
 		};
 		this.worker.start();
 
-		ButtonThread bt = new ButtonThread() {
-
-			@Override
-			protected void doTask() throws CloudstoreException {
-
-				try {
-					while (worker.isRunning()) {
-						try {
-							Thread.sleep(250l);
-						} catch (InterruptedException e) {}
-						updateAll();
-					}
-				} catch (CloudstoreException e) {
-					// TODO Innerhalb des Runners ist ein Fehler aufgetretten. Hier muss nen DICKES handling hin!
-					e.printStackTrace();
-				}
-			}
-		};
-		bt.start();
-
 	}
 
 	private void doProcessing() throws DataProcessingException {
@@ -135,12 +166,11 @@ public class DataProcessor {
 
 			for (DATA_PROCESS_METHOD dpm : this.currentJob.getValue().getMethods()) {
 
-				this.dpm = dpm;
-
 				Object[] param = { this.currentJob.getValue() };
 				try {
 					this.dpe = (DataProcessElement) Reflector.reflectClass((DataProcessor.packageName + dpm.getClassName()),
 							param);
+					this.dpm = dpm;
 					this.dpe.doProcessing(dpt);
 				} catch (ReflectionException e) {
 					throw new DataProcessingException(e.getMessage(), e.getCause());
@@ -175,14 +205,6 @@ public class DataProcessor {
 
 	}
 
-	private void updateAll() {
-
-		for (DataProcessorUpdateInterface dpui : this.toInform) {
-			dpui.updateContent(this);
-		}
-
-	}
-
 	public DATA_PROCESS_METHOD getCurrentMethod() {
 
 		return this.dpm;
@@ -190,7 +212,7 @@ public class DataProcessor {
 	}
 
 	public int getCurrentStatus() {
-		
+
 		if (this.dpe == null) {
 			return 0;
 		}
@@ -235,6 +257,15 @@ public class DataProcessor {
 
 		this.blockWorkingList = false;
 		return copy;
+	}
+
+	public List<StorageProvider> getCurrentProvider() throws DataProcessingException {
+
+		if (this.getCurrentMethod() != DATA_PROCESS_METHOD.upload) {
+			throw new DataProcessingException("Kein Upload zur Zeit aktiv");
+		}
+
+		return ((Upload) this.dpe).getDetailedStatus();
 	}
 
 }

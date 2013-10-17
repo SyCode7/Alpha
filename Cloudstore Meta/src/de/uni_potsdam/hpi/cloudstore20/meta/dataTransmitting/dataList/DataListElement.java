@@ -1,20 +1,26 @@
 package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList;
 
-public class DataListElement {
+import java.io.Serializable;
 
+public class DataListElement implements Serializable {
+
+	private static final long serialVersionUID = 9160413449819252106L;
 	private String name;
 	private boolean isFolder;
 	private DataList folderContent;
 
 	public String getName() {
+
 		return this.name;
 	}
 
 	public boolean isFolder() {
+
 		return this.isFolder;
 	}
 
 	public DataList getFolderContent() throws DataListException {
+
 		if (this.isFolder) {
 			return this.folderContent;
 		}

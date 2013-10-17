@@ -16,7 +16,6 @@ public class DataProcessorTest {
 
 	public File fileToTest;
 	private long fileSize = 100 * 1024 * 1024;
-	private float percentage = 0.05f;
 
 	@Before
 	public void setUp() throws Exception {
@@ -34,32 +33,26 @@ public class DataProcessorTest {
 	}
 
 	@Test
-	public void testProcessFile() throws DataProcessingException {
+	public void testProcessFile() {
 
 		CloudstoreConfig config = CloudstoreConfig.loadDefault();
 
-		DataProcessTask dpt = DataProcessor.processFile(config, this.fileToTest);
+		DataProcessor dp = DataProcessor.getInstance();
 
-		long min = Long.MAX_VALUE;
-		long max = Long.MIN_VALUE;
-		for (ProviderFileContainer pfc : dpt.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {
+		dp.addNewTask(this.fileToTest, config);
+		DataProcessTask dpt = dp.getDoneTask(this.fileToTest);
 
-			long value = pfc.getUploadTimeForFileList();
-
-			if (value > max) {
-				max = value;
-			}
-			if (value < min) {
-				min = value;
-			}
-
+		if (dpt == null) {
+			fail("DataProcessTask nicht gefunden");
 		}
 
-		long diff = max - min;
-		if (max * this.percentage < diff) {
-			fail("Uploadoptimierungsgrenze überschritten");
+		for (DATA_PROCESS_METHOD dpm : config.getMethods()) {
+
+			if (!dpt.getMethods().contains(dpm)) {
+				fail("Eine Methode wurde durch den Processor nicht ausgeführt!");
+			}
+
 		}
 
 	}
-
 }

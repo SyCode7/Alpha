@@ -11,10 +11,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicator;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListException;
@@ -159,13 +159,6 @@ public class DataListTab extends TabElement {
 			}
 		});
 		tree.getItems()[0].setExpanded(true);
-	}
-
-	@Override
-	public void updateContent(DataProcessor content) {
-
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
