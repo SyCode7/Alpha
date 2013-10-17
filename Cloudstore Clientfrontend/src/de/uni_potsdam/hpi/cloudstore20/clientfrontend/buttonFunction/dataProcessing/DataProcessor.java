@@ -166,12 +166,11 @@ public class DataProcessor {
 
 			for (DATA_PROCESS_METHOD dpm : this.currentJob.getValue().getMethods()) {
 
-				this.dpm = dpm;
-
 				Object[] param = { this.currentJob.getValue() };
 				try {
 					this.dpe = (DataProcessElement) Reflector.reflectClass((DataProcessor.packageName + dpm.getClassName()),
 							param);
+					this.dpm = dpm;
 					this.dpe.doProcessing(dpt);
 				} catch (ReflectionException e) {
 					throw new DataProcessingException(e.getMessage(), e.getCause());

@@ -8,7 +8,12 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -32,12 +37,12 @@ public class UploadTab extends TabElement {
 	private List todoFileList;
 	private List doneFileList;
 	private ProgressBar progressbar;
-	private Label lblStatus;
 	private LinkedList<UploadProgressbarContainer> uploadBars = new LinkedList<UploadProgressbarContainer>();
 	private SashForm sashForm_progressBars;
 	private SashForm sashForm_UploadProgressBars;
 	private DATA_PROCESS_METHOD lastMethod = null;
 	private String lastFile = "";
+	private PaintListener paintListener;
 
 	public UploadTab(TabFolder tabFolder, DefaultWindow window) {
 
@@ -53,8 +58,6 @@ public class UploadTab extends TabElement {
 
 		SashForm sashForm_main = new SashForm(tabFolder, SWT.VERTICAL);
 		tbtmUpload.setControl(sashForm_main);
-
-		new Composite(sashForm_main, SWT.NONE);
 
 		SashForm sashForm_content = new SashForm(sashForm_main, SWT.NONE);
 
@@ -125,22 +128,59 @@ public class UploadTab extends TabElement {
 		done.setText("Abgearbeitete Dateien:");
 		doneFileList = new List(sashForm_upload_dataAndMap, SWT.BORDER | SWT.V_SCROLL);
 
-		sashForm_progressBars = new SashForm(sashForm_upload_dataAndMap, SWT.NONE);
-		progressbar = new ProgressBar(sashForm_progressBars, SWT.SMOOTH);
-		sashForm_UploadProgressBars = new SashForm(sashForm_progressBars, SWT.NONE);
+		SashForm sashForm_pictureProgessbar = new SashForm(sashForm_upload_dataAndMap, SWT.NONE);
+
+		Canvas canvas1 = new Canvas(sashForm_pictureProgessbar, SWT.NONE);
+
+		canvas1.addPaintListener(new PaintListener() {
+
+			public void paintControl(PaintEvent e) {
+
+				// Image image = new Image(display, "D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\file.jpg");
+				Image image = new Image(DefaultWindow.display,
+						"D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\test.png");
+
+				e.gc.drawImage(image, 0, 0);
+
+				image.dispose();
+			}
+		});
+
+		sashForm_progressBars = new SashForm(sashForm_pictureProgessbar, SWT.NONE);
+
+		SashForm sashForm_standardProgressBar = new SashForm(sashForm_progressBars, SWT.VERTICAL);
+
+		new Composite(sashForm_standardProgressBar, SWT.NONE);
+		progressbar = new ProgressBar(sashForm_standardProgressBar, SWT.SMOOTH);
+		new Composite(sashForm_standardProgressBar, SWT.NONE);
+		
+		sashForm_standardProgressBar.setWeights(new int[] { 1, 1, 1 });
+		sashForm_UploadProgressBars = new SashForm(sashForm_progressBars, SWT.VERTICAL);
 		sashForm_progressBars.setWeights(new int[] { 1, 0 });
 
-		lblStatus = new Label(sashForm_upload_dataAndMap, SWT.NONE);
-		lblStatus.setText("");
+		Canvas canvas2 = new Canvas(sashForm_pictureProgessbar, SWT.NONE);
 
-		sashForm_upload_dataAndMap.setWeights(new int[] { 3, 2, 9, 2, 9, 4, 2 });
+		canvas2.addPaintListener(new PaintListener() {
+
+			public void paintControl(PaintEvent e) {
+
+				// Image image = new Image(display, "D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\cloud.jpg");
+				Image image = new Image(DefaultWindow.display,
+						"D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\test.png");
+
+				e.gc.drawImage(image, 0, 0);
+
+				image.dispose();
+			}
+		});
+		sashForm_pictureProgessbar.setWeights(new int[] { 1, 10, 1 });
+
+		sashForm_upload_dataAndMap.setWeights(new int[] { 2, 2, 7, 2, 7, 6 });
 
 		Browser browser = new Browser(sashForm_content, SWT.NONE);
 		browser.setUrl("maps.google.com");
 		sashForm_content.setWeights(new int[] { 1, 0 });
-
-		new Composite(sashForm_main, SWT.NONE);
-		sashForm_main.setWeights(new int[] { 1, 50, 1 });
+		sashForm_main.setWeights(new int[] { 50 });
 
 	}
 
@@ -151,9 +191,8 @@ public class UploadTab extends TabElement {
 		DATA_PROCESS_METHOD dpm = DataProcessor.getInstance().getCurrentMethod();
 		if (dpm != null) {
 			String description = dpm.getShortDescription();
-			this.lblStatus.setText(file + "\t" + description);
+			this.updateProgressbar(dpm, file + "\t" + description);
 		}
-		this.updateProgressbar(dpm);
 
 		this.updateFileLists(file);
 
@@ -177,7 +216,7 @@ public class UploadTab extends TabElement {
 		}
 	}
 
-	private void updateProgressbar(DATA_PROCESS_METHOD dpm) throws DataProcessingException {
+	private void updateProgressbar(DATA_PROCESS_METHOD dpm, final String message) throws DataProcessingException {
 
 		boolean upload = (dpm == DATA_PROCESS_METHOD.upload);
 
@@ -193,7 +232,28 @@ public class UploadTab extends TabElement {
 
 		} else {
 
+			if (this.paintListener != null) {
+				this.progressbar.removePaintListener(this.paintListener);
+			}
+			if (this.lastMethod != dpm) {
+				this.paintListener = new PaintListener() {
+
+					public void paintControl(PaintEvent e) {
+
+						if (message == null || message.length() == 0)
+							return;
+
+						e.gc.setFont(e.display.getSystemFont());
+						e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
+
+						Rectangle rec = progressbar.getBounds();
+						e.gc.drawString(message, rec.x + 5, (rec.height - e.gc.getFontMetrics().getHeight()) / 2, true);
+					}
+
+				};
+			}
 			this.progressbar.setSelection(DataProcessor.getInstance().getCurrentStatus());
+			this.progressbar.addPaintListener(this.paintListener);
 		}
 
 		this.setOneProgressbar(!upload);

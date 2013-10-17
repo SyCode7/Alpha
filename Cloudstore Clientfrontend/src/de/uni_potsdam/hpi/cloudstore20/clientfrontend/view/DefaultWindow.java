@@ -30,7 +30,7 @@ import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreCo
 public class DefaultWindow {
 
 	public Shell shell;
-	private static Display display;
+	public static Display display;
 	private TabFolder tabFolder;
 	private static LinkedList<TabElement> tabsToUpdate = new LinkedList<TabElement>();
 	private long updatingIntervall = 100l;
@@ -169,13 +169,6 @@ public class DefaultWindow {
 		this.createOnly4DesignTabContent();
 	}
 
-	private void createOnly4DesignTabContent() {
-
-		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
-		tbtmUpload.setText("Only4Designer");
-
-	}
-
 	private void startContentUpdater() {
 
 		Thread t = new Thread() {
@@ -207,6 +200,13 @@ public class DefaultWindow {
 			}
 		};
 		t.start();
+
+	}
+
+	private void createOnly4DesignTabContent() {
+
+		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
+		tbtmUpload.setText("Only4Designer");
 
 	}
 
