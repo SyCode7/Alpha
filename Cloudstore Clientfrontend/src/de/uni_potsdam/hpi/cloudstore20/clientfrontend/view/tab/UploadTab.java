@@ -137,8 +137,7 @@ public class UploadTab extends TabElement {
 			public void paintControl(PaintEvent e) {
 
 				// Image image = new Image(display, "D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\file.jpg");
-				Image image = new Image(DefaultWindow.display,
-						"D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\test.png");
+				Image image = new Image(DefaultWindow.display, new File("pic\\test.png").getAbsolutePath());
 
 				e.gc.drawImage(image, 0, 0);
 
@@ -153,7 +152,7 @@ public class UploadTab extends TabElement {
 		new Composite(sashForm_standardProgressBar, SWT.NONE);
 		progressbar = new ProgressBar(sashForm_standardProgressBar, SWT.SMOOTH);
 		new Composite(sashForm_standardProgressBar, SWT.NONE);
-		
+
 		sashForm_standardProgressBar.setWeights(new int[] { 1, 1, 1 });
 		sashForm_UploadProgressBars = new SashForm(sashForm_progressBars, SWT.VERTICAL);
 		sashForm_progressBars.setWeights(new int[] { 1, 0 });
@@ -165,8 +164,7 @@ public class UploadTab extends TabElement {
 			public void paintControl(PaintEvent e) {
 
 				// Image image = new Image(display, "D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\cloud.jpg");
-				Image image = new Image(DefaultWindow.display,
-						"D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\test.png");
+				Image image = new Image(DefaultWindow.display, new File("pic\\test.png").getAbsolutePath());
 
 				e.gc.drawImage(image, 0, 0);
 
