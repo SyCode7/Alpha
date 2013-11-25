@@ -116,7 +116,7 @@ public class GoogleStorageProvider extends StorageProvider {
 	
 	// private methods
 	
-	private String getRemoteFolderName(){
+	protected String getRemoteFolderName(){
 		return BUCKET_NAME + "/" + remoteFolderName;
 	}
 	
@@ -167,6 +167,5 @@ public class GoogleStorageProvider extends StorageProvider {
 		// TODO
 		return "";
 	}
-	
 	
 }

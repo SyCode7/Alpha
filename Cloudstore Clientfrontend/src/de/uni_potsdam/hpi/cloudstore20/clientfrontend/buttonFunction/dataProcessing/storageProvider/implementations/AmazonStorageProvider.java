@@ -125,7 +125,7 @@ public class AmazonStorageProvider extends StorageProvider {
 	
 	// private methods
 
-	private String getRemoteFolderName(){
+	protected String getRemoteFolderName(){
 		return BUCKET_NAME + "/" + remoteFolderName;
 	}
 	

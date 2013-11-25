@@ -40,5 +40,13 @@
 			<artifactId>microsoft-windowsazure-api</artifactId>
 			<version>0.4.6</version>
 		</dependency>
+		
+    	<dependency>
+      		<groupId>com</groupId>
+	      	<artifactId>rackspace</artifactId>
+			<version>1</version>
+			<scope>system</scope> 
+      		<systemPath>${basedir}/lib/rackspace.jar</systemPath> 
+    	</dependency>
 	</dependencies>
 </project>

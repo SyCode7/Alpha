@@ -146,7 +146,7 @@ public class AzureStorageProvider extends StorageProvider {
 	
 
 
-	private String getRemoteFolderName() {
+	protected String getRemoteFolderName() {
 
 		return this.remoteFolderName.toLowerCase();
 	}

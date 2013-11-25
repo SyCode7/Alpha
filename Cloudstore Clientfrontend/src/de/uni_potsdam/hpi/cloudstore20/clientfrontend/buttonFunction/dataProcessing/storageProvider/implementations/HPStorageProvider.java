@@ -45,4 +45,10 @@ public class HPStorageProvider extends StorageProvider {
 		return null;
 	}
 
+	@Override
+	protected String getRemoteFolderName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

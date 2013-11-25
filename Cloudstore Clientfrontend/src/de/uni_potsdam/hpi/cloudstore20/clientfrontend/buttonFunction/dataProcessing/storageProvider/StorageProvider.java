@@ -72,6 +72,7 @@ public abstract class StorageProvider {
 
 	public abstract String getFileHash(String fileID) throws StorageProviderException;
 
+	protected abstract String getRemoteFolderName();
 	
 	static {
 		File downFolder = new File(downloadFolder);
