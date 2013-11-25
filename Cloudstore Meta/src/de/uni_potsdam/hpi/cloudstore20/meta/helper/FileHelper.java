@@ -2,28 +2,31 @@ package de.uni_potsdam.hpi.cloudstore20.meta.helper;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.SocketException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class FileHelper {
+	
+	private static final int bufferSize = 32 * 1024;
 
 	public static boolean generateRandomContentFile(String filePath, long fileSize) {
 
 		RandomAccessFile f = null;
 		File file = new File(filePath);
 
-		int cacheSize = 32 * 1024; // 32Kb
 		long bytesWritten = 0L;
 
 		try {
 			f = new RandomAccessFile(file, "rw");
 			f.setLength(fileSize);
 			while (bytesWritten < fileSize) {
-				int bytesToWrite = (int) Math.min(cacheSize, fileSize - bytesWritten);
+				int bytesToWrite = (int) Math.min(bufferSize, fileSize - bytesWritten);
 				byte[] cache = new byte[bytesToWrite];
 				new Random().nextBytes(cache);
 				f.write(cache);
@@ -76,6 +79,33 @@ public class FileHelper {
 
 		fis.close();
 		return complete.digest();
+	}
+	
+
+	public static void copyStream(InputStream is, OutputStream os) throws IOException {
+
+		copyStream(is, os, -1);
+	}
+
+	public static void copyStream(InputStream is, OutputStream os, int maxTries) throws IOException {
+
+		boolean again = false;
+		do{
+			again = false;
+			try {
+				byte[] ioBuf = new byte[bufferSize];
+				int bytesRead;
+				while ((bytesRead = is.read(ioBuf)) != -1) {
+					os.write(ioBuf, 0, bytesRead);
+				}
+				os.flush();
+				os.close();
+			} catch (SocketException e) {
+				again = true;
+			}
+			maxTries--;
+		} while (again && maxTries > 0);
+		
 	}
 
 }

@@ -4,11 +4,14 @@ import java.io.File;
 
 public abstract class StorageProvider {
 
-	private String providerName;
-	private String location;
+	protected String providerName;
+	protected String location;
 	protected StorageProviderConfig config;
 	private int processStatus = 0;
-
+	
+	protected static String downloadFolder = "download";
+	protected String remoteFolderName = "cloudstore20";
+	
 	public StorageProvider(String providerName, String location) throws StorageProviderException {
 
 		this.providerName = providerName;
@@ -69,4 +72,11 @@ public abstract class StorageProvider {
 
 	public abstract String getFileHash(String fileID) throws StorageProviderException;
 
+	
+	static {
+		File downFolder = new File(downloadFolder);
+		if(!downFolder.isDirectory()){
+			downFolder.mkdir();
+		}
+	}
 }
