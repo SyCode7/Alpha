@@ -94,16 +94,8 @@ public class RackspaceStorageProvider extends StorageProvider {
 		} catch (HttpException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} finally{
-			try {
-				if(fos != null){
-					fos.close();
-				}
-				if(is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				throw new StorageProviderException(this.providerName, e);
-			}
+			this.closeStream(is);
+			this.closeStream(fos);
 		}
 	}
 

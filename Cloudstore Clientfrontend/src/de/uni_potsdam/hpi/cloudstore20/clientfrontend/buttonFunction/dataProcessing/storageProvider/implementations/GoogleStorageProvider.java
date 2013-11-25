@@ -72,23 +72,25 @@ public class GoogleStorageProvider extends StorageProvider {
 
 	@Override
 	public File downloadFile(String fileID) throws StorageProviderException {
+		FileOutputStream fos = null;
 		try {
 //			long t1,t2;
 
 			GSObject gsFile = this.getService().getObject(this.getRemoteFolderName(), fileID);
 			File localFile = new File(downloadFolder + File.separator + fileID);
-			FileOutputStream fos = new FileOutputStream(localFile);
+			fos = new FileOutputStream(localFile);
 			
 //			t1 = System.currentTimeMillis();
 			FileHelper.copyStream(gsFile.getDataInputStream(), fos);
 //			t2 = System.currentTimeMillis();
 			
-			fos.close();
 			return localFile;//this.returnValue(true, t1, t2, fileID, remoteFolderName);
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
+		} finally {
+			this.closeStream(fos);
 		}
 	}
 

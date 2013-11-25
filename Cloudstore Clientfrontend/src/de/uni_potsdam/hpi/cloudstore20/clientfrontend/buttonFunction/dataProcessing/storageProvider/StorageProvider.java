@@ -1,6 +1,9 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public abstract class StorageProvider {
 
@@ -64,6 +67,27 @@ public abstract class StorageProvider {
 
 	}
 
+
+	protected void closeStream(OutputStream os) throws StorageProviderException {
+		try {
+			if(os != null){
+				os.close();
+			}
+		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		}
+	}
+	
+	protected void closeStream(InputStream is) throws StorageProviderException {
+		try {
+			if(is != null){
+				is.close();
+			}
+		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		}
+	}
+	
 	public abstract String uploadFile(File file) throws StorageProviderException;
 
 	public abstract File downloadFile(String fileID) throws StorageProviderException;
@@ -73,6 +97,7 @@ public abstract class StorageProvider {
 	public abstract String getFileHash(String fileID) throws StorageProviderException;
 
 	protected abstract String getRemoteFolderName();
+	
 	
 	static {
 		File downFolder = new File(downloadFolder);

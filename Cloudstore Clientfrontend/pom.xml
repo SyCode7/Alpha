@@ -48,5 +48,10 @@
 			<scope>system</scope> 
       		<systemPath>${basedir}/lib/rackspace.jar</systemPath> 
     	</dependency>
+    	<dependency>
+    		<groupId>org.apache.jclouds</groupId>
+    		<artifactId>jclouds-allblobstore</artifactId>
+    		<version>1.6.2-incubating</version>
+    	</dependency>
 	</dependencies>
 </project>

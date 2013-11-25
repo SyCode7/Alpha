@@ -37,16 +37,15 @@ public class AzureStorageProvider extends StorageProvider {
 	@Override
 	public String uploadFile(File file) throws StorageProviderException {
 
+		FileInputStream fis = null;
 		try {
 			String remoteFolderName = this.getRemoteFolderName();
 			long fileSize = file.length();
 			this.getServiceClient().getContainerReference(remoteFolderName).createIfNotExist();
 			CloudBlockBlob blob = this.getBlob(file.getName());
-			FileInputStream fis = new FileInputStream(file);
+			fis = new FileInputStream(file);
 
 			blob.upload(fis, fileSize);
-
-			fis.close();
 
 			HashCode hash = Files.hash(file, Hashing.md5());
 			String md5 = Base64.encode(hash.asBytes());
@@ -61,6 +60,8 @@ public class AzureStorageProvider extends StorageProvider {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (URISyntaxException e) {
 			throw new StorageProviderException(this.providerName, e);
+		} finally {
+			this.closeStream(fis);
 		}
 	}
 
@@ -88,22 +89,10 @@ public class AzureStorageProvider extends StorageProvider {
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} finally {
-			try {
-				if(fos != null){
-					fos.close();
-				}
-			} catch (IOException e) {
-				throw new StorageProviderException(this.providerName, e);
-			}
+			this.closeStream(fos);
 		}
 		
-		File f = new File(destPath);
-
-		if (f.exists()) {
-			return f;
-		} else {
-			return f;
-		}
+		return new File(destPath);
 	}
 
 	@Override
