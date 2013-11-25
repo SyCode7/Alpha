@@ -8,7 +8,7 @@ import java.io.OutputStream;
 public abstract class StorageProvider {
 
 	protected String providerName;
-	protected String location;
+	protected String location = "";
 	protected StorageProviderConfig config;
 	private int processStatus = 0;
 	
