@@ -12,7 +12,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.storageProvider.implementations.MockupStorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
@@ -38,7 +38,6 @@ public class ErasureTest {
 			ProviderFileContainer pfc = new ProviderFileContainer(new MockupStorageProvider());
 			this.startContent.addProviderFileContainer(pfc);
 		}
-		this.startContent.getProviderFileListFor(DATA_PROCESS_METHOD.test).get(0).addFile(new File(this.tempFile));
 
 	}
 
@@ -72,7 +71,7 @@ public class ErasureTest {
 					fail("Datei hat die falsche Größe");
 				}
 				// TODO: Test ob Name der Datei einem Pattern entspricht
-				if (false) {
+				if (true) {
 					fail("Datei hat nicht den richtigen Namen");
 				}
 			}

@@ -1,7 +1,6 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -23,17 +22,18 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.BackupConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.DataListTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.MapTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.ProviderConfigTab;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
+import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 
 public class DefaultWindow {
 
 	public Shell shell;
-	private static Display display;
+	public static Display display;
 	private TabFolder tabFolder;
-	private static List<TabElement> tabsToUpdate = new LinkedList<TabElement>();
+	private static LinkedList<TabElement> tabsToUpdate = new LinkedList<TabElement>();
+	private long updatingIntervall = 100l;
 
 	public CloudstoreConfig config;
 
@@ -64,7 +64,8 @@ public class DefaultWindow {
 	public void open() {
 
 		DefaultWindow.display = Display.getDefault();
-		createContents();
+		this.createContents();
+		this.startContentUpdater();
 		this.shell.open();
 		this.shell.layout();
 		while (!this.shell.isDisposed()) {
@@ -89,22 +90,22 @@ public class DefaultWindow {
 		this.shell.setText("Cloudstore 2.0");
 		this.shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-		SashForm sashForm = new SashForm(this.shell, SWT.VERTICAL);
+		SashForm sashForm_MainFrame = new SashForm(this.shell, SWT.VERTICAL);
 
-		Label lblHeaderText = new Label(sashForm, SWT.NONE);
+		Label lblHeaderText = new Label(sashForm_MainFrame, SWT.NONE);
 		lblHeaderText.setFont(SWTResourceManager.getFont("Segoe UI", 13, SWT.BOLD));
 		lblHeaderText.setText("CloudRaid - Futuristic Online Storage for now");
 
-		this.tabFolder = new TabFolder(sashForm, SWT.NONE);
+		this.tabFolder = new TabFolder(sashForm_MainFrame, SWT.NONE);
 
 		this.loadTabElements();
 
-		this.closeButton(sashForm);
+		this.closeButton(sashForm_MainFrame);
 
-		this.loginButton(sashForm);
+		this.loginButton(sashForm_MainFrame);
 
-		SashForm sashForm_1 = new SashForm(sashForm, SWT.NONE);
-		Button btnLogin = new Button(sashForm_1, SWT.NONE);
+		SashForm sashForm_LoginFrame = new SashForm(sashForm_MainFrame, SWT.NONE);
+		Button btnLogin = new Button(sashForm_LoginFrame, SWT.NONE);
 		btnLogin.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(final SelectionEvent e) {
@@ -116,7 +117,7 @@ public class DefaultWindow {
 		});
 		btnLogin.setText("Login");
 
-		final Button btnLoadfromserver = new Button(sashForm_1, SWT.CHECK);
+		final Button btnLoadfromserver = new Button(sashForm_LoginFrame, SWT.CHECK);
 		btnLoadfromserver.setSelection(config.getLoadFromServer());
 		btnLoadfromserver.addSelectionListener(new SelectionAdapter() {
 
@@ -127,9 +128,9 @@ public class DefaultWindow {
 			}
 		});
 		btnLoadfromserver.setText("loadFromServer");
-		sashForm_1.setWeights(new int[] { 1, 1 });
+		sashForm_LoginFrame.setWeights(new int[] { 1, 1 });
 
-		sashForm.setWeights(new int[] { 2, 20, 1, 1 });
+		sashForm_MainFrame.setWeights(new int[] { 2, 20, 1, 1 });
 
 	}
 
@@ -168,26 +169,45 @@ public class DefaultWindow {
 		this.createOnly4DesignTabContent();
 	}
 
+	private void startContentUpdater() {
+
+		Thread t = new Thread() {
+
+			@Override
+			public void run() {
+
+				while (true) {
+					try {
+						Thread.sleep(updatingIntervall);
+					} catch (InterruptedException e1) {}
+
+					DefaultWindow.display.syncExec(new Thread() {
+
+						public void run() {
+
+							for (TabElement tab : DefaultWindow.tabsToUpdate) {
+								try {
+									tab.updateContent();
+								} catch (CloudstoreException e) {
+									// TODO POPUP wegen fehlermeldung
+									// Das Popup darf auch nur einmal kommen und am besten muss die refreshingRoutine pausieren
+									e.printStackTrace();
+								}
+							}
+						}
+					});
+				}
+			}
+		};
+		t.start();
+
+	}
+
 	private void createOnly4DesignTabContent() {
 
 		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
 		tbtmUpload.setText("Only4Designer");
 
-	}
-
-	public static void updateContent() {
-
-		DefaultWindow.display.syncExec(new Thread() {
-
-			public void run() {
-
-				for (TabElement tab : DefaultWindow.tabsToUpdate) {
-					tab.updateContent();
-				}
-
-			}
-
-		});
 	}
 
 }

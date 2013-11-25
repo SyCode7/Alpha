@@ -5,8 +5,8 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessor;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 
 public class MapTab extends TabElement {
 
@@ -28,17 +28,10 @@ public class MapTab extends TabElement {
 	}
 
 	@Override
-	public void updateContent(DataProcessor content) {
-
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	protected void performContentUpdate() {
 
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

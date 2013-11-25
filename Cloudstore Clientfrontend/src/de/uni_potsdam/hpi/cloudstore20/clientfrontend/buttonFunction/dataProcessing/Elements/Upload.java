@@ -1,10 +1,14 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.ButtonThread;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 
@@ -23,26 +27,30 @@ public class Upload extends DataProcessElement {
 
 		this.dpt = task;
 
-		// TODO: Daten werden nicht parallel hochgeladen!
-		ButtonThread thread = new ButtonThread() {
+		List<Thread> threads = new LinkedList<Thread>();
 
-			@Override
-			protected void doTask() throws CloudstoreException {
+		for (final ProviderFileContainer pfc : task.getProviderFileListForUploading()) {
 
-				for (ProviderFileContainer pfc : dpt.getProviderFileListForUploading()) {
+			ButtonThread t = new ButtonThread() {
+
+				@Override
+				protected void doTask() throws CloudstoreException {
 
 					pfc.uploadData();
 
 				}
+			};
 
-			}
-		};
+			t.start();
+			threads.add(t);
 
-		thread.start();
+		}
 
-		try {
-			thread.join();
-		} catch (InterruptedException e) {}
+		for (Thread t : threads) {
+			try {
+				t.join();
+			} catch (InterruptedException e) {}
+		}
 
 		return task;
 	}
@@ -52,7 +60,7 @@ public class Upload extends DataProcessElement {
 
 		int status = 0;
 
-		for (ProviderFileContainer pfc : dpt.getProviderFileListForUploading()) {
+		for (ProviderFileContainer pfc : this.dpt.getProviderFileListForUploading()) {
 
 			status += pfc.getProvider().getProcessStatus();
 
@@ -60,6 +68,19 @@ public class Upload extends DataProcessElement {
 
 		return (int) (status / this.dpt.getProviderFileListForUploading().size());
 
+	}
+
+	public List<StorageProvider> getDetailedStatus() {
+
+		List<StorageProvider> returnValue = new LinkedList<StorageProvider>();
+
+		for (ProviderFileContainer pfc : this.dpt.getProviderFileListForUploading()) {
+
+			returnValue.add(pfc.getProvider());
+
+		}
+
+		return returnValue;
 	}
 
 }
