@@ -171,14 +171,26 @@ public class RackspaceStorageProvider extends StorageProvider {
 		}
 	}
 
-	private FilesClient getClient() {
+	private FilesClient getClient() throws StorageProviderException {
+		try {
+			if(this.client == null){
+				client = new FilesClient();   
+				//zugangsdaten werden aus rackspace.jar -> cloudfiles.properties ausgelesen!
+				client.login();
+			}
+		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (HttpException e) {
+			throw new StorageProviderException(this.providerName, e);
+		}
 		return this.client;
 	}
 	
 
 	private InputStream getObjectAsStream(String fileID) throws 
 		FilesAuthorizationException, FilesInvalidNameException, 
-		FilesNotFoundException, IOException, HttpException {
+		FilesNotFoundException, IOException, HttpException, 
+		StorageProviderException {
 		
 		return this.getClient().getObjectAsStream(this.getRemoteFolderName(), fileID);
 	}
