@@ -150,4 +150,9 @@ public class MockupStorageProvider extends StorageProvider {
 
 	}
 
+	@Override
+	protected String getRemoteFolderName() {
+		return this.remoteFolderName;
+	}
+
 }

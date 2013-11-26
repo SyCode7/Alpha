@@ -50,5 +50,22 @@
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.13</version>
 		</dependency>
+		<dependency>
+			<groupId>com.microsoft.windowsazure</groupId>
+			<artifactId>microsoft-windowsazure-api</artifactId>
+			<version>0.4.6</version>
+		</dependency>
+    	<dependency>
+      		<groupId>com</groupId>
+	      	<artifactId>rackspace</artifactId>
+			<version>1</version>
+			<scope>system</scope> 
+      		<systemPath>${basedir}/lib/rackspace.jar</systemPath> 
+    	</dependency>
+    	<dependency>
+    		<groupId>org.apache.jclouds</groupId>
+    		<artifactId>jclouds-allblobstore</artifactId>
+    		<version>1.6.2-incubating</version>
+    	</dependency>
 	</dependencies>
 </project>
