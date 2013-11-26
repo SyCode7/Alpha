@@ -19,7 +19,18 @@ public class MockupStorageProvider extends StorageProvider {
 
 	public MockupStorageProvider() throws StorageProviderException {
 
-		super("Mockup" + System.currentTimeMillis());
+		super("Mockup_" + System.currentTimeMillis());
+
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {}
+
+		this.createTempWorkingDir();
+	}
+
+	public MockupStorageProvider(String name) throws StorageProviderException {
+
+		super("Mockup_" + name + "_" + System.currentTimeMillis());
 
 		try {
 			Thread.sleep(500);

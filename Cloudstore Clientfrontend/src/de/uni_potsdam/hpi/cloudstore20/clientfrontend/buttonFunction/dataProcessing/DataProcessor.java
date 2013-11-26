@@ -1,13 +1,19 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing;
 
 import java.io.File;
+import java.math.BigInteger;
+import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.ButtonThread;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.configuration.CloudraidNode;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.configuration.HasseDiagramm;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.Upload;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
@@ -17,7 +23,11 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.Reflector;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.ServletCommunicationException;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfigException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.OPTIMIZATION_FUNCTION;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.PROVIDER_ENUM;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 
 public class DataProcessor {
 
@@ -31,7 +41,7 @@ public class DataProcessor {
 	private static String packageName = "de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.Elements.";
 
 	private Map<File, CloudstoreConfig> workingList = new HashMap<File, CloudstoreConfig>();
-	private Entry<File, CloudstoreConfig> currentJob = null;
+	private Entry<File, UsedCloudstoreConfig> currentJob = null;
 	private DataProcessElement dpe = null;
 	private DATA_PROCESS_METHOD dpm = null;
 	private List<DataProcessTask> doneWork = new LinkedList<DataProcessTask>();
@@ -156,9 +166,9 @@ public class DataProcessor {
 			DataProcessTask dpt = new DataProcessTask(this.currentJob.getKey());
 
 			// TODO: Die richtigen Provider auslesen
-			for (int i = 0; i < 6; i++) {
+			for (PROVIDER_ENUM prov : this.currentJob.getValue().getConfiguredProvider()) {
 				try {
-					dpt.addProviderFileContainer(new ProviderFileContainer(new MockupStorageProvider()));
+					dpt.addProviderFileContainer(new ProviderFileContainer(new MockupStorageProvider(prov.toString())));
 				} catch (ServletCommunicationException | StorageProviderException e) {
 					e.printStackTrace();
 				}
@@ -185,14 +195,15 @@ public class DataProcessor {
 
 	}
 
-	private Entry<File, CloudstoreConfig> getNextTask() {
+	private Entry<File, UsedCloudstoreConfig> getNextTask() throws DataProcessingException {
 
-		Entry<File, CloudstoreConfig> entry = null;
+		Entry<File, UsedCloudstoreConfig> entry = null;
 
 		this.blockWorkingList = true;
 		if (!this.workingList.entrySet().isEmpty()) {
 			for (Entry<File, CloudstoreConfig> entry_ : this.workingList.entrySet()) {
-				entry = entry_;
+				UsedCloudstoreConfig ucc = this.getBestConfig(entry_.getValue(), entry_.getKey().length());
+				entry = new AbstractMap.SimpleEntry<File, UsedCloudstoreConfig>(entry_.getKey(), ucc);
 				break;
 			}
 		}
@@ -203,6 +214,118 @@ public class DataProcessor {
 
 		return entry;
 
+	}
+
+	private UsedCloudstoreConfig getBestConfig(CloudstoreConfig config, long fileSize) throws DataProcessingException {
+
+		UsedCloudstoreConfig ucc = null;
+
+		if (config.getDecideAlone4BestConfigToUse()) {
+
+			HasseDiagramm hd = new HasseDiagramm(config.getConfiguredProvider(), fileSize);
+			Set<CloudraidNode> nodes;
+			try {
+				nodes = hd.filterNodes(config.getMaxCosts(), config.getNumberOfNines());
+			} catch (CloudstoreConfigException e) {
+				throw new DataProcessingException(e.getMessage(), e.getCause());
+			}
+
+			for (OPTIMIZATION_FUNCTION of : config.getOptimizationOrdering()) {
+				if (of.equals(OPTIMIZATION_FUNCTION.AVAILABILITY)) {
+					nodes = this.getHighestAvail(nodes);
+				} else if (of.equals(OPTIMIZATION_FUNCTION.PERFORMANCE)) {
+					nodes = this.getHighestPerf(nodes);
+				} else if (of.equals(OPTIMIZATION_FUNCTION.PRICE)) {
+					nodes = this.getLowestCosts(nodes);
+				}
+			}
+
+			// TODO: was passiert, wenn es wirklich mehrere wären?
+			// gleiches Problem wie manuelle auswahl?
+			if (nodes.size() <= 0) {
+				throw new DataProcessingException("Es gibt keinen optimalen Knoten!");
+			}
+			CloudraidNode bestNode4thisProblem = null;
+			for (CloudraidNode cn : nodes) {
+				bestNode4thisProblem = cn;
+				break;
+			}
+			if (bestNode4thisProblem == null) {
+				throw new DataProcessingException("Beim Auslesen des optimalen Knotens ist ein Fehler aufgetreten.");
+			}
+
+			ucc = new UsedCloudstoreConfig(bestNode4thisProblem.getK(), bestNode4thisProblem.getM(),
+					bestNode4thisProblem.getProviderSet(), config);
+
+		} else {
+			throw new DataProcessingException("not implemented yet");
+		}
+
+		return ucc;
+	}
+
+	private Set<CloudraidNode> getHighestPerf(Set<CloudraidNode> nodes) {
+
+		Set<CloudraidNode> newNodes = new HashSet<CloudraidNode>();
+
+		double bestValue = Double.MAX_VALUE;
+		for (CloudraidNode cn : nodes) {
+
+			double value = cn.calculateTime(cn.getUploadPerformance()) + cn.calculateTime(cn.getDownloadPerformance());
+
+			if (value < bestValue) {
+				newNodes.clear();
+				bestValue = value;
+			}
+			if (value == bestValue) {
+				newNodes.add(cn);
+			}
+		}
+
+		return newNodes;
+	}
+
+	private Set<CloudraidNode> getLowestCosts(Set<CloudraidNode> nodes) {
+
+		Set<CloudraidNode> newNodes = new HashSet<CloudraidNode>();
+
+		double bestValue = Double.MAX_VALUE;
+		for (CloudraidNode cn : nodes) {
+
+			double value = cn.getCostsInComparisonToBestSingleUpload();
+
+			if (bestValue > value) {
+				newNodes.clear();
+				bestValue = value;
+			}
+			if (bestValue == value) {
+				newNodes.add(cn);
+			}
+
+		}
+
+		return newNodes;
+	}
+
+	private Set<CloudraidNode> getHighestAvail(Set<CloudraidNode> nodes) {
+
+		Set<CloudraidNode> newNodes = new HashSet<CloudraidNode>();
+
+		BigInteger bestValue = new BigInteger("0");
+		for (CloudraidNode cn : nodes) {
+
+			BigInteger value = cn.getAvailability();
+			// a.compareTo(b); // returns (-1 if a < b), (0 if a == b), (1 if a > b)
+			if (value.compareTo(bestValue) == 1) {
+				newNodes.clear();
+				bestValue = value;
+			}
+			if (value.compareTo(bestValue) == 0) {
+				newNodes.add(cn);
+			}
+		}
+
+		return newNodes;
 	}
 
 	public DATA_PROCESS_METHOD getCurrentMethod() {
