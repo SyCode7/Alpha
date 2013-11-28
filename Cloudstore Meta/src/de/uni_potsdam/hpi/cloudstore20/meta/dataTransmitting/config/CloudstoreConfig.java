@@ -1,8 +1,10 @@
 package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingClass;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingException;
@@ -11,21 +13,26 @@ public class CloudstoreConfig extends DataTransmittingClass {
 
 	private static final long serialVersionUID = -6408120828047873381L;
 
-	// private enum CloudstoreConfigElements {
-	// dataProcessConfig, erasureConfig;
-	// }
+	private List<DATA_PROCESS_METHOD> methods;
+	private OPTIMIZATION_FUNCTION[] optimizationOrdering;
+	private double maxCosts;
+	private int numberOfNines;
 
-	private List<DATA_PROCESS_METHOD> methods = new LinkedList<DATA_PROCESS_METHOD>();
-	private int k;
-	private int m;
+	// TODO: Datenshema für gespeicherte Passwörter etc.
+	// aufpassen, dass Zugangsdaten NICHT zum Serverübertragen werden
+	private Set<PROVIDER_ENUM> configuredProvider;
 
-	private boolean loadFromServer = true;
+	private boolean loadFromServer = false;
+	private boolean decideAlone4BestConfigToUse = true;
 
-	private CloudstoreConfig(List<DATA_PROCESS_METHOD> methods, int k, int m) {
+	protected CloudstoreConfig(List<DATA_PROCESS_METHOD> methods, Set<PROVIDER_ENUM> provider,
+			OPTIMIZATION_FUNCTION[] optimizationOrdering, int numberOfNines, double maxCosts) {
 
+		this.optimizationOrdering = optimizationOrdering;
+		this.configuredProvider = provider;
 		this.methods = methods;
-		this.k = k;
-		this.m = m;
+		this.numberOfNines = numberOfNines;
+		this.maxCosts = maxCosts;
 	}
 
 	@Override
@@ -50,14 +57,12 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		return temp;
 	}
 
-	public int getK() {
+	public Set<PROVIDER_ENUM> getConfiguredProvider() {
 
-		return this.k;
-	}
+		Set<PROVIDER_ENUM> list = new HashSet<PROVIDER_ENUM>();
+		list.addAll(this.configuredProvider);
+		return list;
 
-	public int getM() {
-
-		return this.m;
 	}
 
 	public void setLoadFromServer(boolean bool) {
@@ -70,20 +75,51 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		return this.loadFromServer;
 	}
 
+	public boolean getDecideAlone4BestConfigToUse() {
+
+		return this.decideAlone4BestConfigToUse;
+
+	}
+
+	public OPTIMIZATION_FUNCTION[] getOptimizationOrdering() {
+
+		OPTIMIZATION_FUNCTION[] t = new OPTIMIZATION_FUNCTION[this.optimizationOrdering.length];
+		for (int i = 0; i < this.optimizationOrdering.length; i++) {
+			t[i] = this.optimizationOrdering[i];
+		}
+		return t;
+	}
+
+	public double getMaxCosts() {
+
+		return this.maxCosts;
+	}
+
+	public int getNumberOfNines() {
+
+		return this.numberOfNines;
+	}
+
 	public static CloudstoreConfig loadDefault() {
 
 		List<DATA_PROCESS_METHOD> methods = new LinkedList<DATA_PROCESS_METHOD>();
 		methods.add(DATA_PROCESS_METHOD.erasure);
 		methods.add(DATA_PROCESS_METHOD.upload);
 
-		return new CloudstoreConfig(methods, 4, 2);
+		Set<PROVIDER_ENUM> provider = new HashSet<PROVIDER_ENUM>();
+		for (PROVIDER_ENUM pe : PROVIDER_ENUM.values()) {
+			provider.add(pe);
+		}
+
+		OPTIMIZATION_FUNCTION[] opti = new OPTIMIZATION_FUNCTION[3];
+		opti[0] = OPTIMIZATION_FUNCTION.PERFORMANCE;
+		opti[1] = OPTIMIZATION_FUNCTION.PRICE;
+		opti[2] = OPTIMIZATION_FUNCTION.AVAILABILITY;
+
+		double maxCosts = 2;
+		int numberOfNines = 5;
+
+		return new CloudstoreConfig(methods, provider, opti, numberOfNines, maxCosts);
 
 	}
-
-	public long getSlicingNumber() {
-
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
