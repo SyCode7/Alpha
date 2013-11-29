@@ -13,7 +13,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.MockupStorageProvider;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
@@ -32,7 +31,7 @@ public class UploadOptimizerTest {
 	public void setUp() throws Exception {
 
 		// TODO: richtige config erzeugen:
-		this.conf = CloudstoreConfig.loadDefault();
+		this.conf = UsedCloudstoreConfig.loadTestConfig();
 
 		String filePath = System.getProperty("java.io.tmpdir") + "tempFile";
 		String fileToTestPath = filePath + System.currentTimeMillis();

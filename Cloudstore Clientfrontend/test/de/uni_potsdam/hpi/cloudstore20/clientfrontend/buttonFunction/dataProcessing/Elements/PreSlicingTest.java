@@ -30,7 +30,7 @@ public class PreSlicingTest {
 	public void setUp() throws Exception {
 
 		// TODO: richtige config erzeugen:
-		this.conf = CloudstoreConfig.loadDefault();
+		this.conf = UsedCloudstoreConfig.loadTestConfig();
 
 		String filePath = System.getProperty("java.io.tmpdir") + "tempFile";
 		String fileToTestPath = filePath + System.currentTimeMillis();

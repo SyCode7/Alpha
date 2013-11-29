@@ -1,5 +1,6 @@
 package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class UsedCloudstoreConfig extends CloudstoreConfig {
@@ -24,6 +25,18 @@ public class UsedCloudstoreConfig extends CloudstoreConfig {
 	public int getM() {
 
 		return this.m;
+	}
+
+	public static UsedCloudstoreConfig loadTestConfig() {
+
+		int k = 3;
+		int m = 1;
+		Set<PROVIDER_ENUM> provider = new HashSet<PROVIDER_ENUM>();
+		provider.add(PROVIDER_ENUM.AMAZON_EU);
+		provider.add(PROVIDER_ENUM.AMAZON_US);
+		provider.add(PROVIDER_ENUM.GOOGLE_EU);
+		provider.add(PROVIDER_ENUM.GOOGLE_US);
+		return new UsedCloudstoreConfig(k, m, provider, CloudstoreConfig.loadDefault());
 	}
 
 }
