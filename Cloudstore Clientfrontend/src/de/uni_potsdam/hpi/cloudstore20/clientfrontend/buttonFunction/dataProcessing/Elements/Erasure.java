@@ -9,15 +9,15 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class Erasure extends DataProcessElement {
 
 	private int status = 0;
 
-	public Erasure(CloudstoreConfig config) {
+	public Erasure(UsedCloudstoreConfig config) {
 
 		super(config);
 		// TODO Auto-generated constructor stub

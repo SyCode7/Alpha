@@ -15,6 +15,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class UploadOptimizerTest {
@@ -22,7 +23,7 @@ public class UploadOptimizerTest {
 	private float percentage = 0.05f;
 	private long fileSize = 100 * 1024 * 1024;
 
-	private CloudstoreConfig conf;
+	private UsedCloudstoreConfig conf;
 
 	private DataProcessTask startContent;
 	private DataProcessTask resultContent;

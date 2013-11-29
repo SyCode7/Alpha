@@ -10,13 +10,13 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 
 public class Upload extends DataProcessElement {
 
 	private DataProcessTask dpt;
 
-	public Upload(CloudstoreConfig config) {
+	public Upload(UsedCloudstoreConfig config) {
 
 		super(config);
 		// TODO Auto-generated constructor stub

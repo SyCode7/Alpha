@@ -3,11 +3,11 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProces
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 
 public class PreChunking extends DataProcessElement {
 
-	public PreChunking(CloudstoreConfig config) {
+	public PreChunking(UsedCloudstoreConfig config) {
 
 		super(config);
 		// TODO Auto-generated constructor stub

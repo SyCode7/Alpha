@@ -122,4 +122,16 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		return new CloudstoreConfig(methods, provider, opti, numberOfNines, maxCosts);
 
 	}
+
+	public void setNumberOfNines(Integer value) {
+
+		this.numberOfNines = value;
+
+	}
+
+	public void setMaxCosts(Double value) {
+
+		this.maxCosts = value;
+
+	}
 }

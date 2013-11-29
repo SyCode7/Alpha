@@ -3,11 +3,11 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProces
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 
 public class Test extends DataProcessElement {
 
-	public Test(CloudstoreConfig config) {
+	public Test(UsedCloudstoreConfig config) {
 
 		super(config);
 	}

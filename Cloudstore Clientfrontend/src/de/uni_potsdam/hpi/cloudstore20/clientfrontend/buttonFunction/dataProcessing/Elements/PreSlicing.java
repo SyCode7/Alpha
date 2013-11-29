@@ -3,11 +3,11 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProces
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 
 public class PreSlicing extends DataProcessElement {
 
-	public PreSlicing(CloudstoreConfig config) {
+	public PreSlicing(UsedCloudstoreConfig config) {
 
 		super(config);
 		// TODO Auto-generated constructor stub

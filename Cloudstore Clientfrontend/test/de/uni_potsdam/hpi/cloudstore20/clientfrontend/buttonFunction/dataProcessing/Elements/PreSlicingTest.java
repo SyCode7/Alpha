@@ -8,20 +8,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessTask;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.DataProcessingException;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.ProviderFileContainer;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.MockupStorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.UsedCloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class PreSlicingTest {
 
 	private long fileSize = 100 * 1024 * 1024;
 
-	private CloudstoreConfig conf;
+	private UsedCloudstoreConfig conf;
 
 	private DataProcessTask startContent;
 	private DataProcessTask resultContent;
@@ -66,20 +66,20 @@ public class PreSlicingTest {
 	@Test
 	public void testDoProcessing() throws DataProcessingException {
 
-		DataProcessElement dpe = new PreSlicing(this.conf);
-
-		this.resultContent = dpe.doProcessing(this.startContent);
-
-		long numberOfFiles = 0;
-		for (ProviderFileContainer pfc : this.resultContent.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {
-
-			numberOfFiles += pfc.getFileList().size();
-
-		}
-		
-		if(numberOfFiles != this.conf.getSlicingNumber()){
+		// DataProcessElement dpe = new PreSlicing(this.conf);
+		//
+		// this.resultContent = dpe.doProcessing(this.startContent);
+		//
+		// long numberOfFiles = 0;
+		// for (ProviderFileContainer pfc : this.resultContent.getProviderFileListFor(DATA_PROCESS_METHOD.test)) {
+		//
+		// numberOfFiles += pfc.getFileList().size();
+		//
+		// }
+		//
+		// if(numberOfFiles != this.conf.getSlicingNumber()){
 			fail("Slicing fehlerhaft");
-		}
+//		}
 
 	}
 

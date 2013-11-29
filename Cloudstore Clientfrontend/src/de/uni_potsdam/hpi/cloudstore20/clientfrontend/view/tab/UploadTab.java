@@ -29,7 +29,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.helper.UploadProgressbarContainer;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
 
 public class UploadTab extends TabElement {
@@ -83,7 +82,7 @@ public class UploadTab extends TabElement {
 				}
 				if (f.isFile()) {
 					// TODO: Config auslesen
-					DataProcessor.getInstance().addNewTask(f, CloudstoreConfig.loadDefault());
+					DataProcessor.getInstance().addNewTask(f, DefaultWindow.config);
 				}
 
 			}
@@ -111,7 +110,7 @@ public class UploadTab extends TabElement {
 					// TODO: Ordnerstruktur sollte in Dateiliste erkennbarsei
 					for (File f_ : f.listFiles()) {
 						// TODO: Config auslesen
-						DataProcessor.getInstance().addNewTask(f_, CloudstoreConfig.loadDefault());
+						DataProcessor.getInstance().addNewTask(f_, DefaultWindow.config);
 					}
 				}
 			}

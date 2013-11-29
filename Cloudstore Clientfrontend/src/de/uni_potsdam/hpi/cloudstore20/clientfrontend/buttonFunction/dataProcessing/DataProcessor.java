@@ -166,9 +166,12 @@ public class DataProcessor {
 			DataProcessTask dpt = new DataProcessTask(this.currentJob.getKey());
 
 			// TODO: Die richtigen Provider auslesen
-			for (PROVIDER_ENUM prov : this.currentJob.getValue().getConfiguredProvider()) {
+			UsedCloudstoreConfig ucc = this.currentJob.getValue();
+			for (PROVIDER_ENUM prov : ucc.getConfiguredProvider()) {
+				String providerName = prov.toString();
+				providerName += "#k:"+ ucc.getK() +"_m:" + ucc.getM();
 				try {
-					dpt.addProviderFileContainer(new ProviderFileContainer(new MockupStorageProvider(prov.toString())));
+					dpt.addProviderFileContainer(new ProviderFileContainer(new MockupStorageProvider(providerName)));
 				} catch (ServletCommunicationException | StorageProviderException e) {
 					e.printStackTrace();
 				}

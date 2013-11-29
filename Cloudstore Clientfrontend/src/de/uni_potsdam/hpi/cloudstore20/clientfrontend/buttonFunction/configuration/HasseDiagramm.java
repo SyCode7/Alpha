@@ -131,7 +131,7 @@ public class HasseDiagramm {
 		for (int i = 0; i < numberOfNines; i++) {
 			bigInt += "9";
 		}
-		for (int i = numberOfNines; i < AvailiablityPropNode.powOfTen - 1; i++) {
+		for (int i = numberOfNines; i < AvailiablityPropNode.powOfTen; i++) {
 			bigInt += "0";
 		}
 
