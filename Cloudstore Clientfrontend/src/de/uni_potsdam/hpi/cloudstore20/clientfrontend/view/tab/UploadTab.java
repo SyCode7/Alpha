@@ -30,6 +30,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.helper.UploadProgressbarContainer;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.IMAGE_CONTAINER;
 
 public class UploadTab extends TabElement {
 
@@ -41,7 +42,11 @@ public class UploadTab extends TabElement {
 	private SashForm sashForm_UploadProgressBars;
 	private DATA_PROCESS_METHOD lastMethod = null;
 	private String lastFile = "";
-	private PaintListener paintListener;
+	private PaintListener paintListenerProgressBars;
+	private Canvas source;
+	private Canvas target;
+	private PaintListener paintListenerSource;
+	private PaintListener paintListenerTarget;
 
 	public UploadTab(TabFolder tabFolder, DefaultWindow window) {
 
@@ -129,20 +134,19 @@ public class UploadTab extends TabElement {
 
 		SashForm sashForm_pictureProgessbar = new SashForm(sashForm_upload_dataAndMap, SWT.NONE);
 
-		Canvas canvas1 = new Canvas(sashForm_pictureProgessbar, SWT.NONE);
-
-		canvas1.addPaintListener(new PaintListener() {
+		paintListenerSource = new PaintListener() {
 
 			public void paintControl(PaintEvent e) {
 
-				// Image image = new Image(display, "D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\file.jpg");
-				Image image = new Image(DefaultWindow.display, new File("pic\\test.png").getAbsolutePath());
+				Image image = new Image(DefaultWindow.display, IMAGE_CONTAINER.Test.getPath());
 
 				e.gc.drawImage(image, 0, 0);
 
 				image.dispose();
 			}
-		});
+		};
+		source = new Canvas(sashForm_pictureProgessbar, SWT.NONE);
+		source.addPaintListener(paintListenerSource);
 
 		sashForm_progressBars = new SashForm(sashForm_pictureProgessbar, SWT.NONE);
 
@@ -156,20 +160,19 @@ public class UploadTab extends TabElement {
 		sashForm_UploadProgressBars = new SashForm(sashForm_progressBars, SWT.VERTICAL);
 		sashForm_progressBars.setWeights(new int[] { 1, 0 });
 
-		Canvas canvas2 = new Canvas(sashForm_pictureProgessbar, SWT.NONE);
-
-		canvas2.addPaintListener(new PaintListener() {
+		paintListenerTarget = new PaintListener() {
 
 			public void paintControl(PaintEvent e) {
 
-				// Image image = new Image(display, "D:\\Workspaces\\cloudstore_2-0\\Cloudstore Clientfrontend\\pic\\cloud.jpg");
-				Image image = new Image(DefaultWindow.display, new File("pic\\test.png").getAbsolutePath());
+				Image image = new Image(DefaultWindow.display, IMAGE_CONTAINER.Test.getPath());
 
 				e.gc.drawImage(image, 0, 0);
 
 				image.dispose();
 			}
-		});
+		};
+		target = new Canvas(sashForm_pictureProgessbar, SWT.NONE);
+		target.addPaintListener(paintListenerTarget);
 		sashForm_pictureProgessbar.setWeights(new int[] { 1, 10, 1 });
 
 		sashForm_upload_dataAndMap.setWeights(new int[] { 2, 2, 7, 2, 7, 6 });
@@ -189,12 +192,63 @@ public class UploadTab extends TabElement {
 		if (dpm != null) {
 			String description = dpm.getShortDescription();
 			this.updateProgressbar(dpm, file + "\t" + description);
+			this.updatePictures(dpm);
 		}
 
 		this.updateFileLists(file);
 
 		this.lastMethod = dpm;
 		this.lastFile = file;
+
+	}
+
+	private void updatePictures(final DATA_PROCESS_METHOD dpm) {
+
+		if (this.lastMethod == dpm) {
+			return;
+		}
+
+		PaintListener newSource = new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+
+				Image image = new Image(DefaultWindow.display, dpm.getSourcePic().getPath());
+
+				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
+				e.gc.fillRectangle(0, 0, e.width, e.height);
+				e.gc.drawImage(image, 0, 0);
+
+				image.dispose();
+
+			}
+		};
+
+		PaintListener newTarget = new PaintListener() {
+
+			public void paintControl(PaintEvent e) {
+
+				Image image = new Image(DefaultWindow.display, dpm.getTargetPic().getPath());
+
+				e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
+				e.gc.fillRectangle(0, 0, e.width, e.height);
+				e.gc.drawImage(image, 0, 0);
+
+				image.dispose();
+			}
+		};
+
+		this.target.removePaintListener(this.paintListenerTarget);
+		this.source.removePaintListener(paintListenerSource);
+
+		this.target.addPaintListener(newTarget);
+		this.source.addPaintListener(newSource);
+
+		this.source.redraw();
+		this.target.redraw();
+
+		this.paintListenerTarget = newTarget;
+		this.paintListenerTarget = newSource;
 
 	}
 
@@ -229,11 +283,11 @@ public class UploadTab extends TabElement {
 
 		} else {
 
-			if (this.paintListener != null) {
-				this.progressbar.removePaintListener(this.paintListener);
+			if (this.paintListenerProgressBars != null) {
+				this.progressbar.removePaintListener(this.paintListenerProgressBars);
 			}
 			if (this.lastMethod != dpm) {
-				this.paintListener = new PaintListener() {
+				this.paintListenerProgressBars = new PaintListener() {
 
 					public void paintControl(PaintEvent e) {
 
@@ -250,7 +304,7 @@ public class UploadTab extends TabElement {
 				};
 			}
 			this.progressbar.setSelection(DataProcessor.getInstance().getCurrentStatus());
-			this.progressbar.addPaintListener(this.paintListener);
+			this.progressbar.addPaintListener(this.paintListenerProgressBars);
 		}
 
 		this.setOneProgressbar(!upload);
