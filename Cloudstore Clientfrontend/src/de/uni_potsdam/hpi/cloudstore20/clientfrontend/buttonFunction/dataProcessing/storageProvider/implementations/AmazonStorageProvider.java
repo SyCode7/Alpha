@@ -24,21 +24,23 @@ public class AmazonStorageProvider extends StorageProvider {
 	protected String BUCKET_NAME = Integer.toHexString(appName.hashCode());
 		
 
-	protected RestS3Service awsService;
+	protected RestS3Service awsService = null;
 	protected AWSCredentials awsCredentials;
 	
-	public AmazonStorageProvider(String providerName, String location)
+	public AmazonStorageProvider()
 			throws StorageProviderException {
-		super(providerName, location);
+		super("Amazon", defaultLocation());
+		initBucket();
 	}
 
-	public AmazonStorageProvider(String providerName)
+	public AmazonStorageProvider(String location)
 			throws StorageProviderException {
-		super(providerName);
+		super("Amazon", location);
+		initBucket();
 	}
 	
 	
-	protected void initBucket() {
+	private void initBucket() {
 		try {
 			this.awsCredentials = new AWSCredentials(this.getAccessKey(), this.getSecretKey());
 			this.awsService = new RestS3Service(this.awsCredentials);
@@ -59,16 +61,10 @@ public class AmazonStorageProvider extends StorageProvider {
 
 	@Override
 	public String uploadFile(File file) throws StorageProviderException {
-
-
 		try {
-//			long t1,t2;
 			S3Object s3File = new S3Object(file);
-//			t1 = System.currentTimeMillis();
 			s3File = this.getService().putObject(this.getRemoteFolderName(),  s3File);
-//			t2 = System.currentTimeMillis();
-			
-			return file.getName();//this.returnValue(file.getName(), t1, t2, remoteFolderName);
+			return file.getName();
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (NoSuchAlgorithmException e) {
@@ -95,7 +91,7 @@ public class AmazonStorageProvider extends StorageProvider {
 			FileHelper.copyStream(gsFile.getDataInputStream(), fos, 3);
 //			t2 = System.currentTimeMillis();
 			
-			return localFile;//this.returnValue(true, t1, t2, fileID, remoteFolderName);
+			return localFile;
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
@@ -128,7 +124,7 @@ public class AmazonStorageProvider extends StorageProvider {
 	// private methods
 
 	protected String getRemoteFolderName(){
-		return BUCKET_NAME + "/" + remoteFolderName;
+		return BUCKET_NAME;// + "/" + remoteFolderName;
 	}
 	
 	
@@ -137,11 +133,11 @@ public class AmazonStorageProvider extends StorageProvider {
 	}
 
 	private String getAccessKey(){
-		return "";
+		return this.keys[0];
 	}
 	
 	private String getSecretKey(){
-		return "";
+		return this.keys[1];
 	}
 
 }
