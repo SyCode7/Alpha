@@ -12,7 +12,6 @@ public abstract class StorageProvider implements StorageProviderInterface{
 	
 	protected String keys[] = {null, null};
 	
-	// TODO: diese werte in die Config auslagern!
 	protected static String downloadFolder = "download"; // temp-ordner!
 	protected String remoteFolderName = "cloudstore20";
 	protected boolean doNotLoadConfig = false;
