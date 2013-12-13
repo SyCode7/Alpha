@@ -5,23 +5,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.impl.rest.httpclient.GoogleStorageService;
 import org.jets3t.service.model.GSBucket;
 import org.jets3t.service.model.GSObject;
 import org.jets3t.service.security.GSCredentials;
 
-
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderConfig;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.STORAGE_PROVIDER_CONFIG;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class GoogleStorageProvider extends StorageProvider {
 
-
 	protected GSCredentials gsCredentials;
-	
+
 	// To communicate with Google Storage use the GoogleStorageService.
 	protected GoogleStorageService gsService;
 
@@ -36,16 +36,15 @@ public class GoogleStorageProvider extends StorageProvider {
 	 */
 	/* https://developers.google.com/storage/docs/bucketnaming?hl=de-DE#requirements */
 	protected String BUCKET_NAME = Integer.toHexString(appName.hashCode());
-	
-	
-	public GoogleStorageProvider()
-			throws StorageProviderException {
+
+	public GoogleStorageProvider() throws StorageProviderException {
+
 		super("Google", defaultLocation());
 		initBucket();
 	}
-	
-	public GoogleStorageProvider(String location) 
-			throws StorageProviderException {
+
+	public GoogleStorageProvider(String location) throws StorageProviderException {
+
 		super("Google", location);
 		initBucket();
 	}
@@ -55,12 +54,12 @@ public class GoogleStorageProvider extends StorageProvider {
 
 		try {
 			GSObject gsFile = new GSObject(file);
-//			long t1,t2;
-//			t1 = System.currentTimeMillis();
+			// long t1,t2;
+			// t1 = System.currentTimeMillis();
 			gsFile = this.getService().putObject(this.getRemoteFolderName(), gsFile);
-//			t2 = System.currentTimeMillis();
-			
-			return file.getName();//this.returnValue(file.getName(), t1, t2, remoteFolderName);
+			// t2 = System.currentTimeMillis();
+
+			return file.getName();// this.returnValue(file.getName(), t1, t2, remoteFolderName);
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (NoSuchAlgorithmException e) {
@@ -72,19 +71,20 @@ public class GoogleStorageProvider extends StorageProvider {
 
 	@Override
 	public File downloadFile(String fileID) throws StorageProviderException {
+
 		FileOutputStream fos = null;
 		try {
-//			long t1,t2;
+			// long t1,t2;
 
 			GSObject gsFile = this.getService().getObject(this.getRemoteFolderName(), fileID);
 			File localFile = new File(downloadFolder + File.separator + fileID);
 			fos = new FileOutputStream(localFile);
-			
-//			t1 = System.currentTimeMillis();
+
+			// t1 = System.currentTimeMillis();
 			FileHelper.copyStream(gsFile.getDataInputStream(), fos);
-//			t2 = System.currentTimeMillis();
-			
-			return localFile;//this.returnValue(true, t1, t2, fileID, remoteFolderName);
+			// t2 = System.currentTimeMillis();
+
+			return localFile;// this.returnValue(true, t1, t2, fileID, remoteFolderName);
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
@@ -99,7 +99,7 @@ public class GoogleStorageProvider extends StorageProvider {
 
 		try {
 			this.getService().deleteObject(this.getRemoteFolderName(), new GSObject(fileID).getKey());
-//			return true;
+			// return true;
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		}
@@ -107,66 +107,70 @@ public class GoogleStorageProvider extends StorageProvider {
 
 	@Override
 	public String getFileHash(String fileID) throws StorageProviderException {
+
 		try {
-			return this.getService().getObjectDetails(BUCKET_NAME + "/"+ remoteFolderName, fileID).getMd5HashAsHex();
+			return this.getService().getObjectDetails(BUCKET_NAME + "/" + remoteFolderName, fileID).getMd5HashAsHex();
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		}
 	}
-	
-	
-	
+
 	// private methods
-	
-	protected String getRemoteFolderName(){
+
+	protected String getRemoteFolderName() {
+
 		return BUCKET_NAME + "/" + remoteFolderName;
 	}
-	
-	private GoogleStorageService getService(){
+
+	private GoogleStorageService getService() {
+
 		return this.gsService;
 	}
-	
-	private void initBucket(){
+
+	private void initBucket() {
 
 		try {
 			this.gsCredentials = new GSCredentials(this.getAccessKey(), this.getSecretKey());
 			this.gsService = new GoogleStorageService(this.gsCredentials);
 			String localBucket = location.toLowerCase() + BUCKET_NAME;
-//			this.setProviderName("Google");
+			// this.setProviderName("Google");
 			GSBucket bucket = null;
 			if (this.projectId == null) {
 				bucket = (GSBucket) gsService.getBucket(localBucket);
 			} else {
 				GSBucket[] buckets = gsService.listAllBuckets(this.projectId);
-				for (GSBucket b: buckets) {
+				for (GSBucket b : buckets) {
 					if (b.getName().equals(localBucket)) {
 						bucket = b;
 					}
-				}				
+				}
 			}
-			if (bucket == null){
+			if (bucket == null) {
 				if (this.projectId == null) {
 					GSBucket newBucket = new GSBucket(localBucket);
 					newBucket.setLocation(location);
-					gsService.createBucket(newBucket);					
-				} else {					
-					gsService.createBucket(localBucket, location, null, this.projectId);					
+					gsService.createBucket(newBucket);
+				} else {
+					gsService.createBucket(localBucket, location, null, this.projectId);
 				}
 			}
-			BUCKET_NAME = localBucket;	// update the bucketname for the chosen region
+			BUCKET_NAME = localBucket; // update the bucketname for the chosen region
 		} catch (ServiceException e) {
 			// TODO
-//			this.lastError = new StorageProviderException(this.providerName, e);
+			// this.lastError = new StorageProviderException(this.providerName, e);
 		}
 	}
 
-	private String getAccessKey(){
-		return this.keys[0];
-	}
-	
-	private String getSecretKey(){
-		return this.keys[1];
+	private String getAccessKey() {
+
+		return StorageProviderConfig.getInstance().get(
+				PROVIDER_ENUM.fromString(this.getCompleteProviderName()).getConfigCategory(), STORAGE_PROVIDER_CONFIG.Username);
 	}
 
-	
+	private String getSecretKey() {
+
+		return StorageProviderConfig.getInstance().get(
+				PROVIDER_ENUM.fromString(this.getCompleteProviderName()).getConfigCategory(), STORAGE_PROVIDER_CONFIG.Password);
+	}
+
 }

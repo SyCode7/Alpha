@@ -4,17 +4,23 @@ import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.dialog.LoginDialog;
@@ -26,6 +32,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_CONFIG_CATEGORY;
 
 public class DefaultWindow {
 
@@ -205,8 +212,8 @@ public class DefaultWindow {
 
 	private void createOnly4DesignTabContent() {
 
-		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
-		tbtmUpload.setText("Only4Designer");
+		TabItem tbtmProviderKonf = new TabItem(tabFolder, SWT.NONE);
+		tbtmProviderKonf.setText("Only4Designer");
 
 	}
 }

@@ -1,6 +1,10 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -8,30 +12,29 @@ import java.security.InvalidKeyException;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
-
-
 import com.microsoft.windowsazure.services.blob.client.CloudBlobClient;
 import com.microsoft.windowsazure.services.blob.client.CloudBlockBlob;
 import com.microsoft.windowsazure.services.core.storage.CloudStorageAccount;
 import com.microsoft.windowsazure.services.core.storage.StorageException;
 import com.microsoft.windowsazure.services.core.storage.utils.Base64;
 
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderConfig;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.STORAGE_PROVIDER_CONFIG;
+
 public class AzureStorageProvider extends StorageProvider {
 
-
 	protected CloudBlobClient serviceClient = null;
-	
-	
-	public AzureStorageProvider()
-			throws StorageProviderException {
+
+	public AzureStorageProvider() throws StorageProviderException {
+
 		super("Azure", defaultLocation());
 	}
 
-	public AzureStorageProvider(String location)
-			throws StorageProviderException {
+	public AzureStorageProvider(String location) throws StorageProviderException {
+
 		super("Azure", location);
 	}
 
@@ -66,17 +69,15 @@ public class AzureStorageProvider extends StorageProvider {
 		}
 	}
 
-
 	@Override
 	public File downloadFile(String fileID) throws StorageProviderException {
-		
+
 		String destPath = downloadFolder + File.separator + fileID;
 		CloudBlockBlob blob = this.getBlob(fileID);
 
 		if (blob == null) {
-			throw new StorageProviderException(
-					"Azure >> downloadFile: could not access blob with following params: " +
-					String.format("remoteFolder: %s, fileId: %s", getRemoteFolderName(), fileID));
+			throw new StorageProviderException("Azure >> downloadFile: could not access blob with following params: "
+					+ String.format("remoteFolder: %s, fileId: %s", getRemoteFolderName(), fileID));
 		}
 		FileOutputStream fos = null;
 		try {
@@ -92,12 +93,13 @@ public class AzureStorageProvider extends StorageProvider {
 		} finally {
 			this.closeStream(fos);
 		}
-		
+
 		return new File(destPath);
 	}
 
 	@Override
 	public void deleteFile(String fileID) throws StorageProviderException {
+
 		CloudBlockBlob blob = this.getBlob(fileID);
 		try {
 			if (blob != null && blob.exists()) {
@@ -114,9 +116,8 @@ public class AzureStorageProvider extends StorageProvider {
 		try {
 			CloudBlockBlob blob = this.getBlob(fileID);
 			if (blob == null) {
-				throw new StorageProviderException(
-						"Azure >> getFileHash: could not access blob with following params: " +
-						String.format("remoteFolder: %s, fileId: %s", getRemoteFolderName(), fileID));
+				throw new StorageProviderException("Azure >> getFileHash: could not access blob with following params: "
+						+ String.format("remoteFolder: %s, fileId: %s", getRemoteFolderName(), fileID));
 			}
 			blob.downloadAttributes();
 			byte[] hash = Base64.decode(blob.getProperties().getContentMD5());
@@ -131,10 +132,6 @@ public class AzureStorageProvider extends StorageProvider {
 			throw new StorageProviderException(this.providerName, e);
 		}
 	}
-	
-	// private
-	
-
 
 	protected String getRemoteFolderName() {
 
@@ -142,7 +139,8 @@ public class AzureStorageProvider extends StorageProvider {
 	}
 
 	private CloudBlobClient getServiceClient() {
-		if(this.serviceClient == null){
+
+		if (this.serviceClient == null) {
 
 			CloudStorageAccount account;
 			try {
@@ -156,14 +154,18 @@ public class AzureStorageProvider extends StorageProvider {
 		}
 		return this.serviceClient;
 	}
-	
+
 	private String getConnectionString() {
 
-		return String.format("DefaultEndpointsProtocol=http;AccountName=%s;AccountKey=%s", keys[0], keys[1]);
+		String user = StorageProviderConfig.getInstance().get(
+				PROVIDER_ENUM.fromString(this.getCompleteProviderName()).getConfigCategory(), STORAGE_PROVIDER_CONFIG.Username);
+		String pwd = StorageProviderConfig.getInstance().get(
+				PROVIDER_ENUM.fromString(this.getCompleteProviderName()).getConfigCategory(), STORAGE_PROVIDER_CONFIG.Password);
+		return String.format("DefaultEndpointsProtocol=http;AccountName=%s;AccountKey=%s", user, pwd);
 	}
 
-	public CloudBlockBlob getBlob(String fileID) 
-			throws StorageProviderException {
+	public CloudBlockBlob getBlob(String fileID) throws StorageProviderException {
+
 		try {
 			return this.getServiceClient().getBlockBlobReference(getRemoteFolderName() + "/" + fileID);
 		} catch (URISyntaxException e) {
@@ -171,11 +173,6 @@ public class AzureStorageProvider extends StorageProvider {
 		} catch (StorageException e) {
 			throw new StorageProviderException(this.providerName, e);
 		}
-	}
-
-	@Override
-	protected String configKey() {
-		return this.providerName + this.location;
 	}
 
 }

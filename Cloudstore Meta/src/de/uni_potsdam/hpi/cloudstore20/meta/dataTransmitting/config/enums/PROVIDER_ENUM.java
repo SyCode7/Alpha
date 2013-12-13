@@ -2,16 +2,21 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums;
 
 public enum PROVIDER_ENUM {
 
-	AZURE_US("Azure#US", 0.037d), AZURE_EU("Azure#EU", 0.037d), GOOGLE_US("Google#US", 0.054d), RACKSPACE("Rackspace#", 0.075d), AMAZON_US(
-			"Amazon#us-west-1", 0.055d), AMAZON_EU("Amazon#EU", 0.055d), GOOGLE_EU("Google#EU", 0.054d), HP("HPStorage#", 0.09d);
+	AZURE_US("Azure#US", 0.037d, PROVIDER_CONFIG_CATEGORY.AzureUS), AZURE_EU("Azure#EU", 0.037d, PROVIDER_CONFIG_CATEGORY.AzureEU), GOOGLE_US(
+			"Google#US", 0.054d, PROVIDER_CONFIG_CATEGORY.Google), RACKSPACE("Rackspace#EU", 0.075d,
+			PROVIDER_CONFIG_CATEGORY.Rackspace), AMAZON_US("Amazon#us-west-1", 0.055d, PROVIDER_CONFIG_CATEGORY.Amazon), AMAZON_EU(
+			"Amazon#EU", 0.055d, PROVIDER_CONFIG_CATEGORY.Amazon), GOOGLE_EU("Google#EU", 0.054d, PROVIDER_CONFIG_CATEGORY.Google), HP(
+			"HPStorage#EU", 0.09d, PROVIDER_CONFIG_CATEGORY.HPStorage);
 
 	private String toString;
 	private double storageCosts;
+	private PROVIDER_CONFIG_CATEGORY configCategory;
 
-	private PROVIDER_ENUM(String toString, double storageCosts) {
+	private PROVIDER_ENUM(String toString, double storageCosts, PROVIDER_CONFIG_CATEGORY configCategory) {
 
 		this.toString = toString;
 		this.storageCosts = storageCosts;
+		this.configCategory = configCategory;
 	}
 
 	public String toString() {
@@ -47,4 +52,10 @@ public enum PROVIDER_ENUM {
 		return result;
 
 	}
+
+	public PROVIDER_CONFIG_CATEGORY getConfigCategory() {
+
+		return this.configCategory;
+	}
+
 }

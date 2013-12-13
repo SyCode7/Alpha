@@ -16,12 +16,12 @@ public class MockupStorageProvider extends StorageProvider {
 	private long sleepingTime = 30l;
 	private double delayFactor = (Math.random() * 1.5) + 0.5;
 	private long finalSleepingTime = (long) (this.sleepingTime * this.delayFactor);
-	
+
 	protected boolean doNotLoadConfig = true;
 
 	public MockupStorageProvider() throws StorageProviderException {
 
-		super("Mockup_" + System.currentTimeMillis());
+		super("Mockup_" + System.currentTimeMillis(), defaultLocation());
 
 		try {
 			Thread.sleep(500);
@@ -32,7 +32,7 @@ public class MockupStorageProvider extends StorageProvider {
 
 	public MockupStorageProvider(String name) throws StorageProviderException {
 
-		super("Mockup_" + name + "_" + System.currentTimeMillis());
+		super("Mockup_" + name + "_" + System.currentTimeMillis(), defaultLocation());
 
 		try {
 			Thread.sleep(500);
@@ -154,6 +154,7 @@ public class MockupStorageProvider extends StorageProvider {
 
 	@Override
 	protected String getRemoteFolderName() {
+
 		return this.remoteFolderName;
 	}
 
