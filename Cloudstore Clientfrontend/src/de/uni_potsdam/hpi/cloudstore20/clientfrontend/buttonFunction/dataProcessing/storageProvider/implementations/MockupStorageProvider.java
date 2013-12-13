@@ -16,6 +16,8 @@ public class MockupStorageProvider extends StorageProvider {
 	private long sleepingTime = 30l;
 	private double delayFactor = (Math.random() * 1.5) + 0.5;
 	private long finalSleepingTime = (long) (this.sleepingTime * this.delayFactor);
+	
+	protected boolean doNotLoadConfig = true;
 
 	public MockupStorageProvider() throws StorageProviderException {
 

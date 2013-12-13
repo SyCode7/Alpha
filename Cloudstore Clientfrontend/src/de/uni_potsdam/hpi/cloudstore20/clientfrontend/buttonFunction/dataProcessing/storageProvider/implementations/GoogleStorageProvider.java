@@ -38,15 +38,15 @@ public class GoogleStorageProvider extends StorageProvider {
 	protected String BUCKET_NAME = Integer.toHexString(appName.hashCode());
 	
 	
-	public GoogleStorageProvider(String providerName)
+	public GoogleStorageProvider()
 			throws StorageProviderException {
-		super(providerName);
+		super("Google", defaultLocation());
 		initBucket();
 	}
 	
-	public GoogleStorageProvider(String providerName, String location) 
+	public GoogleStorageProvider(String location) 
 			throws StorageProviderException {
-		super(providerName, location);
+		super("Google", location);
 		initBucket();
 	}
 
@@ -159,15 +159,14 @@ public class GoogleStorageProvider extends StorageProvider {
 //			this.lastError = new StorageProviderException(this.providerName, e);
 		}
 	}
-	
+
 	private String getAccessKey(){
-		// TODO
-		return "";
+		return this.keys[0];
 	}
 	
 	private String getSecretKey(){
-		// TODO
-		return "";
+		return this.keys[1];
 	}
+
 	
 }

@@ -1,26 +1,36 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
-public abstract class StorageProvider {
+public abstract class StorageProvider implements StorageProviderInterface{
 
 	protected String providerName;
 	protected String location = "";
 	protected StorageProviderConfig config;
 	private int processStatus = 0;
 	
-	protected static String downloadFolder = "download";
-	protected String remoteFolderName = "cloudstore20";
 	
+	protected String keys[] = {null, null};
+	
+	// TODO: diese werte in die Config auslagern!
+	protected static String downloadFolder = "download"; // temp-ordner!
+	protected String remoteFolderName = "cloudstore20";
+	protected boolean doNotLoadConfig = false;
+	
+	private static String config_file = "keys.conf";
+	private static String config_separator = ":::";
+		
 	public StorageProvider(String providerName, String location) throws StorageProviderException {
 
 		this.providerName = providerName;
 		this.location = location;
 
-		this.loadConfig();
+		try {
+			this.loadConfig();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new StorageProviderException(e);
+		}
 
 	}
 
@@ -28,14 +38,52 @@ public abstract class StorageProvider {
 
 		this.providerName = providerName;
 
-		this.loadConfig();
+		try {
+			this.loadConfig();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new StorageProviderException(e);
+		}
 
 	}
 
-	private void loadConfig() throws StorageProviderException {
+	private void loadConfig() throws StorageProviderException, IOException {
+		if(this.doNotLoadConfig) return;
+		InputStream fis;
+		BufferedReader br;
+		String line;
+		File configFile = null;
+		
+		configFile = new File(StorageProvider.config_file);
+		if(!configFile.exists()){
+			throw new StorageProviderException("Please create a configuration file for the Providers!");
+		}
+		
+		fis = new FileInputStream(configFile);
+		br = new BufferedReader(new InputStreamReader(fis));
+		boolean configFound = false;
+		while ((line = br.readLine()) != null) {
+			if(line.length() == 0) continue; 
+		    String split[] = line.split(StorageProvider.config_separator);
+		    assert split.length == 3: "invalid config line: " + line;
+		    
+		    if(!split[0].equals(this.configKey())) continue;
+		    this.keys[0] = split[1];
+		    this.keys[1] = split[2];
+		    
+		    configFound = true;
+		    break;
+		}
 
-		// TODO: implement
-
+		br.close();
+		
+		if(!configFound){
+			throw new StorageProviderException(
+					String.format(
+							"no config was found for %s in %s", 
+							this.configKey(),
+							configFile.getAbsolutePath()));
+		}
 	}
 
 	public int getProcessStatus() {
@@ -88,16 +136,14 @@ public abstract class StorageProvider {
 		}
 	}
 	
-	public abstract String uploadFile(File file) throws StorageProviderException;
-
-	public abstract File downloadFile(String fileID) throws StorageProviderException;
-
-	public abstract void deleteFile(String fileID) throws StorageProviderException;
-
-	public abstract String getFileHash(String fileID) throws StorageProviderException;
-
 	protected abstract String getRemoteFolderName();
+	protected static String defaultLocation(){
+		return "EU";
+	}
 	
+	protected String configKey(){
+		return this.providerName;
+	}
 	
 	static {
 		File downFolder = new File(downloadFolder);

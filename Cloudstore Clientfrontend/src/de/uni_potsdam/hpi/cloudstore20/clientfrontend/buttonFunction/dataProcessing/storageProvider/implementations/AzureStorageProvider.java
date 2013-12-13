@@ -3,6 +3,7 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProces
 import java.io.*;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -14,24 +15,24 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 
 import com.microsoft.windowsazure.services.blob.client.CloudBlobClient;
 import com.microsoft.windowsazure.services.blob.client.CloudBlockBlob;
+import com.microsoft.windowsazure.services.core.storage.CloudStorageAccount;
 import com.microsoft.windowsazure.services.core.storage.StorageException;
 import com.microsoft.windowsazure.services.core.storage.utils.Base64;
 
 public class AzureStorageProvider extends StorageProvider {
 
 
-	protected CloudBlobClient serviceClient;
-	private boolean connected;
+	protected CloudBlobClient serviceClient = null;
 	
 	
-	public AzureStorageProvider(String providerName, String location)
+	public AzureStorageProvider()
 			throws StorageProviderException {
-		super(providerName, location);
+		super("Azure", defaultLocation());
 	}
 
-	public AzureStorageProvider(String providerName)
+	public AzureStorageProvider(String location)
 			throws StorageProviderException {
-		super(providerName);
+		super("Azure", location);
 	}
 
 	@Override
@@ -141,23 +142,40 @@ public class AzureStorageProvider extends StorageProvider {
 	}
 
 	private CloudBlobClient getServiceClient() {
+		if(this.serviceClient == null){
+
+			CloudStorageAccount account;
+			try {
+				account = CloudStorageAccount.parse(this.getConnectionString());
+				this.serviceClient = account.createCloudBlobClient();
+			} catch (InvalidKeyException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 		return this.serviceClient;
 	}
 	
+	private String getConnectionString() {
+
+		return String.format("DefaultEndpointsProtocol=http;AccountName=%s;AccountKey=%s", keys[0], keys[1]);
+	}
+
 	public CloudBlockBlob getBlob(String fileID) 
 			throws StorageProviderException {
-
-		if (this.connected) {
-			try {
-				return this.serviceClient.getBlockBlobReference(getRemoteFolderName() + "/" + fileID);
-			} catch (URISyntaxException e) {
-				throw new StorageProviderException(this.providerName, e);
-			} catch (StorageException e) {
-				throw new StorageProviderException(this.providerName, e);
-			}
+		try {
+			return this.getServiceClient().getBlockBlobReference(getRemoteFolderName() + "/" + fileID);
+		} catch (URISyntaxException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (StorageException e) {
+			throw new StorageProviderException(this.providerName, e);
 		}
-		
-		throw new StorageProviderException("Azure >> getBlob: provider is not connected!");
+	}
+
+	@Override
+	protected String configKey() {
+		return this.providerName + this.location;
 	}
 
 }

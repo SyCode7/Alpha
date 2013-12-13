@@ -63,9 +63,15 @@
       		<systemPath>${basedir}/lib/rackspace.jar</systemPath> 
     	</dependency>
     	<dependency>
-    		<groupId>org.apache.jclouds</groupId>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+    	<dependency>
+    		<groupId>org.jclouds</groupId>
     		<artifactId>jclouds-allblobstore</artifactId>
-    		<version>1.6.2-incubating</version>
+    		<version>1.5.5</version>
     	</dependency>
 	</dependencies>
 </project>

@@ -205,8 +205,8 @@ public class DefaultWindow {
 
 	private void createOnly4DesignTabContent() {
 
-		TabItem tbtmUploadkonf = new TabItem(tabFolder, SWT.NONE);
-		tbtmUploadkonf.setText("Only4Designer");
+		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
+		tbtmUpload.setText("Only4Designer");
 
 	}
 }
