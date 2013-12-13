@@ -1,9 +1,14 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -14,11 +19,13 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.FILE_POST_HANDLING;
 
 public class BackupConfigTab extends TabElement {
 
 	private SashForm sashForm_2;
 	private Button btnCheckButton;
+	private Map<FILE_POST_HANDLING, Button> buttons;
 
 	public BackupConfigTab(TabFolder tabFolder, DefaultWindow window) {
 
@@ -40,12 +47,47 @@ public class BackupConfigTab extends TabElement {
 		Label lblD = new Label(sashForm_1, SWT.NONE);
 		lblD.setText("Datei nach dem Upload ...");
 
-		Button btnLassen = new Button(sashForm_1, SWT.RADIO);
-		btnLassen.setText("auf dem Rechner lassen.");
-		Button btnRudiment = new Button(sashForm_1, SWT.RADIO);
-		btnRudiment.setText("durch Rudiment ersetzen.");
-		Button btnLoeschen = new Button(sashForm_1, SWT.RADIO);
-		btnLoeschen.setText("löschen.");
+		if (buttons == null) {
+			buttons = new HashMap<FILE_POST_HANDLING, Button>();
+		}
+
+		FILE_POST_HANDLING selected = DefaultWindow.config.getFilePostHandling();
+		for (FILE_POST_HANDLING fph : FILE_POST_HANDLING.values()) {
+			Button temp = new Button(sashForm_1, SWT.RADIO);
+			temp.setText(fph.getDisplayString());
+			temp.setSelection(fph == selected);
+			buttons.put(fph, temp);
+			temp.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+
+					Button selected = ((Button) e.getSource());
+					if (selected.getSelection()) {
+						for (FILE_POST_HANDLING fph : buttons.keySet()) {
+							if (buttons.get(fph) == selected) {
+								DefaultWindow.config.setFilePostHandling(fph);
+							}
+						}
+					}
+
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+
+					Button selected = ((Button) e.getSource());
+					if (selected.getSelection()) {
+						for (FILE_POST_HANDLING fph : buttons.keySet()) {
+							if (buttons.get(fph) == selected) {
+								DefaultWindow.config.setFilePostHandling(fph);
+							}
+						}
+					}
+
+				}
+			});
+		}
 
 		new Composite(sashForm_1, SWT.NONE);
 

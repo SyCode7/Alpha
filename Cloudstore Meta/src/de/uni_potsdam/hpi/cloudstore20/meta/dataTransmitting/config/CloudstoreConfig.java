@@ -8,6 +8,10 @@ import java.util.Set;
 
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingClass;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.DataTransmittingException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.DATA_PROCESS_METHOD;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.FILE_POST_HANDLING;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.OPTIMIZATION_FUNCTION;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
 
 public class CloudstoreConfig extends DataTransmittingClass {
 
@@ -15,6 +19,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 
 	private List<DATA_PROCESS_METHOD> methods;
 	private OPTIMIZATION_FUNCTION[] optimizationOrdering;
+	private FILE_POST_HANDLING filePostHandling;
 	private double maxCosts;
 	private int numberOfNines;
 
@@ -26,13 +31,14 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	private boolean decideAlone4BestConfigToUse = true;
 
 	protected CloudstoreConfig(List<DATA_PROCESS_METHOD> methods, Set<PROVIDER_ENUM> provider,
-			OPTIMIZATION_FUNCTION[] optimizationOrdering, int numberOfNines, double maxCosts) {
+			OPTIMIZATION_FUNCTION[] optimizationOrdering, int numberOfNines, double maxCosts, FILE_POST_HANDLING fph) {
 
 		this.optimizationOrdering = optimizationOrdering;
 		this.configuredProvider = provider;
 		this.methods = methods;
 		this.numberOfNines = numberOfNines;
 		this.maxCosts = maxCosts;
+		this.filePostHandling = fph;
 	}
 
 	@Override
@@ -105,6 +111,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		List<DATA_PROCESS_METHOD> methods = new LinkedList<DATA_PROCESS_METHOD>();
 		methods.add(DATA_PROCESS_METHOD.erasure);
 		methods.add(DATA_PROCESS_METHOD.upload);
+		methods.add(DATA_PROCESS_METHOD.filePostProcessing);
 
 		Set<PROVIDER_ENUM> provider = new HashSet<PROVIDER_ENUM>();
 		for (PROVIDER_ENUM pe : PROVIDER_ENUM.values()) {
@@ -119,7 +126,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		double maxCosts = 2;
 		int numberOfNines = 5;
 
-		return new CloudstoreConfig(methods, provider, opti, numberOfNines, maxCosts);
+		return new CloudstoreConfig(methods, provider, opti, numberOfNines, maxCosts, FILE_POST_HANDLING.Stub);
 
 	}
 
@@ -134,4 +141,15 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		this.maxCosts = value;
 
 	}
+
+	public void setFilePostHandling(FILE_POST_HANDLING fph) {
+
+		this.filePostHandling = fph;
+	}
+
+	public FILE_POST_HANDLING getFilePostHandling() {
+
+		return this.filePostHandling;
+	}
+
 }

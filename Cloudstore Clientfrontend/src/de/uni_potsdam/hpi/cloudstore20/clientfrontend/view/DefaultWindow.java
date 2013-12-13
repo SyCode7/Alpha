@@ -8,18 +8,13 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.dialog.LoginDialog;
@@ -31,7 +26,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.OPTIMIZATION_FUNCTION;
 
 public class DefaultWindow {
 

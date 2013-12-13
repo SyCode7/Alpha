@@ -10,7 +10,7 @@ import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.PROVIDER_ENUM;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
 
 public class InMemDatabase {
 
