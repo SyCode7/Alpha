@@ -57,6 +57,8 @@ public abstract class StorageProvider implements StorageProviderInterface {
 	protected void updateProcessStatus(int status) {
 
 		this.processStatus = status;
+		
+		System.out.println(String.format("StorageProvider.updateProcessStatus() >> %d%%", status));
 
 	}
 

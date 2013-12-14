@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 import java.math.BigInteger;
 import java.net.URISyntaxException;
-import java.nio.channels.FileChannel;
 import java.security.InvalidKeyException;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeoutException;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-import com.microsoft.windowsazure.services.blob.client.BlobOutputStream;
+
 import com.microsoft.windowsazure.services.blob.client.CloudBlobClient;
 import com.microsoft.windowsazure.services.blob.client.CloudBlockBlob;
 import com.microsoft.windowsazure.services.core.storage.CloudStorageAccount;
@@ -32,7 +34,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.STORAGE_PROVIDER_CONFIG;
-import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class AzureStorageProvider extends StorageProvider {
 
@@ -71,31 +72,13 @@ public class AzureStorageProvider extends StorageProvider {
 		        }
 		    }
 			
-			Callable<Boolean> uploader = new Uploader(blob, fis, fileSize);
 			ExecutorService executor = Executors.newSingleThreadExecutor();
-			Future<Boolean> res = executor.submit(uploader);
-		    
-			FileChannel fc = fis.getChannel();
-					
-			long oldPos = 0;
-			while(!executor.isTerminated()){
-				if(oldPos != fc.position()){
-					oldPos = fc.position();
-					System.out.println(String.format("%d / %d = %d", fileSize, oldPos, oldPos * 100 / fileSize));
-				}
-				if(fileSize <= oldPos)
-					break;
-				try {
-					res.get(10, TimeUnit.MILLISECONDS);
-					break;
-				} catch (TimeoutException e) {continue;}
-			}
-			
-			res.get();
-			//TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			this.waitAndUpdateStatus(fileSize, fis.getChannel(), executor.submit(new Uploader(blob, fis, fileSize)));
+
 			HashCode hash = Files.hash(file, Hashing.md5());
 			String md5 = Base64.encode(hash.asBytes());
 			blob.getProperties().setContentMD5(md5);
+			blob.getProperties().setLength(fileSize);
 			blob.uploadProperties();
 			return file.getName();
 		} catch (FileNotFoundException e) {
@@ -126,21 +109,66 @@ public class AzureStorageProvider extends StorageProvider {
 					+ String.format("remoteFolder: %s, fileId: %s", getRemoteFolderName(), fileID));
 		}
 		FileOutputStream fos = null;
+
 		try {
+			blob.downloadAttributes();
+			long fileSize = blob.getProperties().getLength();
 			fos = new FileOutputStream(destPath);
-			blob.download(fos);
-			fos.close();
+
+			class Downloader implements Callable<Boolean>{
+				CloudBlockBlob blob = null;
+				FileOutputStream fos = null;
+				public Downloader(CloudBlockBlob blob, FileOutputStream fos) {
+					this.blob = blob;
+					this.fos = fos;
+				}
+				@Override
+				public Boolean call() throws Exception {
+					blob.download(fos);
+					return true;
+				}
+			}
+			
+			final ExecutorService executor = Executors.newSingleThreadExecutor();
+			this.waitAndUpdateStatus(fileSize, fos.getChannel(), executor.submit(new Downloader(blob, fos)));
+			
 		} catch (FileNotFoundException e) {
-			throw new StorageProviderException(this.providerName, e);
-		} catch (StorageException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
+		}catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (StorageException e) {
+			e.printStackTrace();
 		} finally {
 			this.closeStream(fos);
 		}
 
 		return new File(destPath);
+	}
+
+	private void waitAndUpdateStatus(long fileSize, FileChannel fc,
+			Future<Boolean> res) throws IOException, InterruptedException, ExecutionException {
+		int oldStatus = 0, newStatus = 0;
+		while(true){
+			
+			newStatus = (int) (((float)fc.position() / (float)fileSize) * 100);
+			if(oldStatus != newStatus){
+				oldStatus = newStatus;
+				this.updateProcessStatus(newStatus);
+			}
+			if(newStatus >= 100)
+				break;
+			try {
+				res.get(10, TimeUnit.MILLISECONDS);
+				break;
+			} catch (TimeoutException e) {continue;} 
+		}
+		res.get();
+		if(oldStatus < 100)
+			this.updateProcessStatus(100);
 	}
 
 	@Override

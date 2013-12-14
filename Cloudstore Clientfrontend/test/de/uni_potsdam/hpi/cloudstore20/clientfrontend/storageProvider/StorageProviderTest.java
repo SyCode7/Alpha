@@ -23,7 +23,7 @@ import de.uni_potsdam.hpi.cloudstore20.meta.helper.HelperException;
 public class StorageProviderTest {
 
 	StorageProvider provider = ProviderReflection.getProvider(PROVIDER_ENUM.AZURE_EU);
-	String fName = "10mb";
+	String fName = "1mb";
 	String workDirName = "provTest";
 
 	File file = null;
