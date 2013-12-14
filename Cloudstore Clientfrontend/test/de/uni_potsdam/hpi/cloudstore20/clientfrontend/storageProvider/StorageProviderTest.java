@@ -15,14 +15,15 @@ import com.google.common.io.Files;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.ProviderReflection;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProvider;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 import de.uni_potsdam.hpi.cloudstore20.meta.helper.HelperException;
 
 
 public class StorageProviderTest {
 
-	StorageProvider provider = ProviderReflection.getProvider("HPStorage");
-	String fName = "1mb";
+	StorageProvider provider = ProviderReflection.getProvider(PROVIDER_ENUM.AZURE_EU);
+	String fName = "10mb";
 	String workDirName = "provTest";
 
 	File file = null;
@@ -52,7 +53,7 @@ public class StorageProviderTest {
 		String hash = FileHelper.getHashMD5(file);
 		assertTrue(file.exists());
 		String result = provider.uploadFile(file);
-		file.delete();
+		assertTrue(file.delete());
 		
 		assertFalse(file.exists());
 		file = provider.downloadFile(result);

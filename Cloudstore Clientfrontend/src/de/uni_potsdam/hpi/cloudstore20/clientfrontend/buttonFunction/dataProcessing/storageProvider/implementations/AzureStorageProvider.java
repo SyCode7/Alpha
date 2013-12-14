@@ -7,11 +7,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
+import java.nio.channels.FileChannel;
 import java.security.InvalidKeyException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+import com.microsoft.windowsazure.services.blob.client.BlobOutputStream;
 import com.microsoft.windowsazure.services.blob.client.CloudBlobClient;
 import com.microsoft.windowsazure.services.blob.client.CloudBlockBlob;
 import com.microsoft.windowsazure.services.core.storage.CloudStorageAccount;
@@ -23,6 +32,7 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcess
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.STORAGE_PROVIDER_CONFIG;
+import de.uni_potsdam.hpi.cloudstore20.meta.helper.FileHelper;
 
 public class AzureStorageProvider extends StorageProvider {
 
@@ -49,8 +59,40 @@ public class AzureStorageProvider extends StorageProvider {
 			CloudBlockBlob blob = this.getBlob(file.getName());
 			fis = new FileInputStream(file);
 
-			blob.upload(fis, fileSize);
-
+			class Uploader implements Callable<Boolean> {
+		        CloudBlockBlob blob;
+		        FileInputStream fis;
+		        long fileSize;
+		        Uploader(CloudBlockBlob blob, FileInputStream fis, long size) { 
+		        	this.blob = blob; this.fis = fis; this.fileSize = size;}
+		        public Boolean call() throws StorageException, IOException{
+		        	blob.upload(fis, fileSize);
+		            return true; 
+		        }
+		    }
+			
+			Callable<Boolean> uploader = new Uploader(blob, fis, fileSize);
+			ExecutorService executor = Executors.newSingleThreadExecutor();
+			Future<Boolean> res = executor.submit(uploader);
+		    
+			FileChannel fc = fis.getChannel();
+					
+			long oldPos = 0;
+			while(!executor.isTerminated()){
+				if(oldPos != fc.position()){
+					oldPos = fc.position();
+					System.out.println(String.format("%d / %d = %d", fileSize, oldPos, oldPos * 100 / fileSize));
+				}
+				if(fileSize <= oldPos)
+					break;
+				try {
+					res.get(10, TimeUnit.MILLISECONDS);
+					break;
+				} catch (TimeoutException e) {continue;}
+			}
+			
+			res.get();
+			//TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			HashCode hash = Files.hash(file, Hashing.md5());
 			String md5 = Base64.encode(hash.asBytes());
 			blob.getProperties().setContentMD5(md5);
@@ -63,6 +105,10 @@ public class AzureStorageProvider extends StorageProvider {
 		} catch (StorageException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (URISyntaxException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} finally {
 			this.closeStream(fis);

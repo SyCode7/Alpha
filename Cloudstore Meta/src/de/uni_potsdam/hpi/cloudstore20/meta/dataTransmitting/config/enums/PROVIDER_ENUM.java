@@ -2,26 +2,44 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums;
 
 public enum PROVIDER_ENUM {
 
-	AZURE_US("Azure#US", 0.037d, PROVIDER_CONFIG_CATEGORY.AzureUS), AZURE_EU("Azure#EU", 0.037d, PROVIDER_CONFIG_CATEGORY.AzureEU), GOOGLE_US(
-			"Google#US", 0.054d, PROVIDER_CONFIG_CATEGORY.Google), RACKSPACE("Rackspace#EU", 0.075d,
-			PROVIDER_CONFIG_CATEGORY.Rackspace), AMAZON_US("Amazon#us-west-1", 0.055d, PROVIDER_CONFIG_CATEGORY.Amazon), AMAZON_EU(
-			"Amazon#EU", 0.055d, PROVIDER_CONFIG_CATEGORY.Amazon), GOOGLE_EU("Google#EU", 0.054d, PROVIDER_CONFIG_CATEGORY.Google), HP(
-			"HPStorage#EU", 0.09d, PROVIDER_CONFIG_CATEGORY.HPStorage);
+	AZURE_US("Azure#US", 0.037d, PROVIDER_CONFIG_CATEGORY.AzureUS, "AzureStorageProvider"), 
+	AZURE_EU("Azure#EU", 0.037d, PROVIDER_CONFIG_CATEGORY.AzureEU, "AzureStorageProvider"), 
+	GOOGLE_EU("Google#EU", 0.054d, PROVIDER_CONFIG_CATEGORY.Google, "GoogleStorageProvider"), 
+	GOOGLE_US("Google#US", 0.054d, PROVIDER_CONFIG_CATEGORY.Google, "GoogleStorageProvider"), 
+	AMAZON_EU("Amazon#EU", 0.055d, PROVIDER_CONFIG_CATEGORY.Amazon, "AmazonStorageProvider"), 
+	AMAZON_US("Amazon#us-west-1", 0.055d, PROVIDER_CONFIG_CATEGORY.Amazon, "AmazonStorageProvider"), 
+	RACKSPACE("Rackspace#EU", 0.075d, PROVIDER_CONFIG_CATEGORY.Rackspace, "RackspaceStorageProvider"), 
+	HP("HPStorage#EU", 0.09d, PROVIDER_CONFIG_CATEGORY.HPStorage, "HPStorageProvider");
 
 	private String toString;
+	private String className;
 	private double storageCosts;
 	private PROVIDER_CONFIG_CATEGORY configCategory;
 
-	private PROVIDER_ENUM(String toString, double storageCosts, PROVIDER_CONFIG_CATEGORY configCategory) {
+	private PROVIDER_ENUM(String toString, double storageCosts, PROVIDER_CONFIG_CATEGORY configCategory, String className) {
 
 		this.toString = toString;
 		this.storageCosts = storageCosts;
 		this.configCategory = configCategory;
+		this.className = className;
 	}
 
 	public String toString() {
 
 		return this.toString;
+	}
+	
+	public String className(){
+		
+		return this.className;
+	}
+	
+	public String getName(){
+		return this.toString.split("#")[0];
+	}
+	
+	public String getLocation(){
+		return this.toString.split("#")[1];
 	}
 
 	@Deprecated

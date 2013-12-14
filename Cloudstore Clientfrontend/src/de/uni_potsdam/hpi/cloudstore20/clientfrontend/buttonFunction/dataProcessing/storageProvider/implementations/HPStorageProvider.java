@@ -3,7 +3,7 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProces
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.StorageProviderException;
 
-public class HPStorageProvider extends JCloudsProvider{
+public class HPStorageProvider extends JCloudsProvider {
 
 	public HPStorageProvider(String location)
 			throws StorageProviderException {

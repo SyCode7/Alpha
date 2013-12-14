@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
+
 import static de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.Constants.*;
 
 public class ProviderReflection {
@@ -13,82 +15,64 @@ public class ProviderReflection {
 
 	private static Map<String, StorageProvider> providerList = new HashMap<String, StorageProvider>();
 	private static Map<String, Long> providerLivingTime = new HashMap<String, Long>();
-	private static Map<String, String> providerClassNames = new HashMap<String, String>();
 
 	private ProviderReflection() {
 	}
 	
-	public static StorageProvider getProvider(String name, String location, boolean unique){
-		return loadClass(getClassName(name), location, unique);
+	
+	
+	public static StorageProvider getProvider(PROVIDER_ENUM prov, boolean unique){
+		return loadClass(prov, unique);
 	}
 
-	public static StorageProvider getProvider(String name){
-		return loadClass(getClassName(name), "", false);
+	public static StorageProvider getProvider(PROVIDER_ENUM prov){
+		return loadClass(prov, false);
 	}
 	
-	public static StorageProvider getProvider(String name, boolean unique){
-		return loadClass(getClassName(name), "", unique);
-	}
 
-	public static StorageProvider getProvider(String name, String location){
-		return loadClass(getClassName(name), location, false);
-	}
+	private static StorageProvider loadClass(PROVIDER_ENUM prov, boolean unique) {
 
-	private static StorageProvider loadClass(String name, String location, boolean unique) {
+		String key = getKey(prov, unique);
 
-		String key = getKey(name, location, unique);
-
-		StorageProvider prov = null;
+		StorageProvider provider = null;
 		if (!providerLivingTime.containsKey(key)) {
-			prov = reflectClass(name, location);
-			providerList.put(key, prov);
+			provider = reflectClass(prov);
+			providerList.put(key, provider);
 			providerLivingTime.put(key, System.currentTimeMillis());
 		}
 
 		if ((System.currentTimeMillis() - providerLivingTime.get(key)) > MAX_PROVIDER_LIVING_TIME) {
-			if(prov == null){
-				prov = reflectClass(name, location);
+			if(provider == null){
+				provider = reflectClass(prov);
 			}
-			providerList.put(key, prov);
+			providerList.put(key, provider);
 			providerLivingTime.put(key, System.currentTimeMillis());
 		}
 
-		if (prov == null) {
-			prov = reflectClass(name, location);
-			providerList.put(key, prov);
+		if (provider == null) {
+			provider = reflectClass(prov);
+			providerList.put(key, provider);
 			providerLivingTime.put(key, System.currentTimeMillis());
 
 		}
 
-		return prov;
+		return provider;
 	}
 
-	private static String getClassName(String name){
-		if(providerClassNames.size() == 0){
-			providerClassNames.put("Google", "GoogleStorageProvider");
-			providerClassNames.put("Amazon", "AmazonStorageProvider");
-			providerClassNames.put("Azure", "AzureStorageProvider");
-			providerClassNames.put("Rackspace", "RackspaceStorageProvider");
-			providerClassNames.put("HPStorage", "HPStorageProvider");
-			providerClassNames.put("Mockup", "MockupStorageProvider");
-		}
-		
-		return providerClassNames.get(name);
-	}
-
-	private static String getKey(String name, String location, boolean unique) {
+	private static String getKey(PROVIDER_ENUM prov, boolean unique) {
 		if (unique) {
-			return name + "#" + location + "#" + System.currentTimeMillis();
+			return prov.toString() + "#" + System.currentTimeMillis();
 		} else {
-			return name + "#" + location;
+			return prov.toString();
 		}
 
 	}
 
-	private static StorageProvider reflectClass(String classname, String location) {
+	private static StorageProvider reflectClass(PROVIDER_ENUM prov) {
 		try {
 			Class<?> cls = Class.forName(ProviderReflection.classLocation
-					+ classname);
+					+ prov.className());
+			String location = prov.getLocation();
 			if(location != null && location.length() > 0){
 				Constructor<?> constructor = cls
 						.getConstructor(new Class[] { String.class });
