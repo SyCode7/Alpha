@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
@@ -41,18 +43,40 @@ public abstract class JCloudsProvider extends StorageProvider {
 			if (!store.createContainerInLocation(null, this.getRemoteFolderName()))
 				throw new StorageProviderException(this.getCompleteProviderName() + " >> uploadFile: cannot create container!");
 
-		FileInputStream is = null;
+		FileInputStream fis = null;
 		try {
-			is = new FileInputStream(file.getAbsoluteFile());
-			Blob blobFile = store.blobBuilder(file.getName()).payload(is).build();
+			class Uploader implements Callable<Boolean> {
+				BlobStore store = null;
+				String remoteFolder = null;
+				Blob blobFile = null;
+				public Uploader(BlobStore store, String remoteFolder, Blob blobFile) {
+					this.store = store;
+					this.remoteFolder = remoteFolder;
+					this.blobFile = blobFile;
+				}
+				@Override
+				public Boolean call() throws Exception {
+					store.putBlob(remoteFolder, blobFile);
+					return true;
+				}
+			}
 
-			store.putBlob(this.getRemoteFolderName(), blobFile);
+			fis = new FileInputStream(file.getAbsoluteFile());
+			Blob blobFile = store.blobBuilder(file.getName()).payload(fis).build();
 
+			this.waitAndUpdateStatus(file.length(), fis.getChannel(), new Uploader(store, this.getRemoteFolderName(), blobFile));
+			
 			return file.getName();
 		} catch (FileNotFoundException e) {
 			throw new StorageProviderException(this.providerName, e);
+		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
+			throw new StorageProviderException(this.providerName, e);
 		} finally {
-			this.closeStream(is);
+			this.closeStream(fis);
 		}
 	}
 
@@ -71,13 +95,32 @@ public abstract class JCloudsProvider extends StorageProvider {
 
 			is = fileBlob.getPayload().getInput();
 			fos = new FileOutputStream(destPath);
-			// hier passiert der download
-			FileHelper.copyStream(is, fos);
+
+			class Downloader implements Callable<Boolean> {
+				InputStream is = null;
+				FileOutputStream fos = null;
+				public Downloader(InputStream is, FileOutputStream fos) {
+					this.is = is;
+					this.fos = fos;
+				}
+				@Override
+				public Boolean call() throws Exception {
+					FileHelper.copyStream(is, fos);
+					return true;
+				}
+			}
+			
+			long fileSize = fileBlob.getMetadata().getContentMetadata().getContentLength();
+			this.waitAndUpdateStatus(fileSize, fos.getChannel(), new Downloader(is, fos));
 
 			return new File(destPath);
 		} catch (FileNotFoundException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} finally {
 			this.closeStream(is);

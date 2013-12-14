@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 import java.math.BigInteger;
 import java.net.URISyntaxException;
@@ -13,11 +12,6 @@ import java.security.InvalidKeyException;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -72,8 +66,7 @@ public class AzureStorageProvider extends StorageProvider {
 		        }
 		    }
 			
-			ExecutorService executor = Executors.newSingleThreadExecutor();
-			this.waitAndUpdateStatus(fileSize, fis.getChannel(), executor.submit(new Uploader(blob, fis, fileSize)));
+			this.waitAndUpdateStatus(fileSize, fis.getChannel(), new Uploader(blob, fis, fileSize));
 
 			HashCode hash = Files.hash(file, Hashing.md5());
 			String md5 = Base64.encode(hash.asBytes());
@@ -129,8 +122,7 @@ public class AzureStorageProvider extends StorageProvider {
 				}
 			}
 			
-			final ExecutorService executor = Executors.newSingleThreadExecutor();
-			this.waitAndUpdateStatus(fileSize, fos.getChannel(), executor.submit(new Downloader(blob, fos)));
+			this.waitAndUpdateStatus(fileSize, fos.getChannel(), new Downloader(blob, fos));
 			
 		} catch (FileNotFoundException e) {
 			throw new StorageProviderException(this.providerName, e);
@@ -149,27 +141,6 @@ public class AzureStorageProvider extends StorageProvider {
 		return new File(destPath);
 	}
 
-	private void waitAndUpdateStatus(long fileSize, FileChannel fc,
-			Future<Boolean> res) throws IOException, InterruptedException, ExecutionException {
-		int oldStatus = 0, newStatus = 0;
-		while(true){
-			
-			newStatus = (int) (((float)fc.position() / (float)fileSize) * 100);
-			if(oldStatus != newStatus){
-				oldStatus = newStatus;
-				this.updateProcessStatus(newStatus);
-			}
-			if(newStatus >= 100)
-				break;
-			try {
-				res.get(10, TimeUnit.MILLISECONDS);
-				break;
-			} catch (TimeoutException e) {continue;} 
-		}
-		res.get();
-		if(oldStatus < 100)
-			this.updateProcessStatus(100);
-	}
 
 	@Override
 	public void deleteFile(String fileID) throws StorageProviderException {

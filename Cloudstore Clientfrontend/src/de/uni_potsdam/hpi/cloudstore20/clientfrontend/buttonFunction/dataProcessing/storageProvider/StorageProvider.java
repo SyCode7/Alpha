@@ -4,8 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.STORAGE_PROVIDER_CONFIG;
 
@@ -82,6 +90,32 @@ public abstract class StorageProvider implements StorageProviderInterface {
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
 		}
+	}
+	
+
+	protected void waitAndUpdateStatus(long fileSize, FileChannel fc,
+			Callable<Boolean> callable) throws IOException, InterruptedException, ExecutionException {
+		int oldStatus = 0, newStatus = 0;
+
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		Future<Boolean> res = executor.submit(callable);
+		while(true){
+			
+			newStatus = (int) (((float)fc.position() / (float)fileSize) * 100);
+			if(oldStatus != newStatus){
+				oldStatus = newStatus;
+				this.updateProcessStatus(newStatus);
+			}
+			if(newStatus >= 100)
+				break;
+			try {
+				res.get(10, TimeUnit.MILLISECONDS);
+				break;
+			} catch (TimeoutException e) {continue;} 
+		}
+		res.get();
+		if(oldStatus < 100)
+			this.updateProcessStatus(100);
 	}
 
 	protected abstract String getRemoteFolderName();

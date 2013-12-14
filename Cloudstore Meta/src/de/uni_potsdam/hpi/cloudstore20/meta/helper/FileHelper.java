@@ -97,7 +97,6 @@ public class FileHelper {
 				int bytesRead;
 				while ((bytesRead = is.read(ioBuf)) != -1) {
 					os.write(ioBuf, 0, bytesRead);
-					System.out.println(bytesRead);
 				}
 				os.flush();
 				os.close();
