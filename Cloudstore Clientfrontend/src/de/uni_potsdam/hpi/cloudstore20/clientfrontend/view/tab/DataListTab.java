@@ -53,7 +53,7 @@ public class DataListTab extends TabElement {
 	private DataList loadContent() throws DataListException {
 
 		DataList dl = null;
-		if (this.window.config.getLoadFromServer()) {
+		if (DefaultWindow.config.getLoadFromServer()) {
 			try {
 				dl = ServletCommunicator.getDataList();
 			} catch (ServletCommunicationException e) {

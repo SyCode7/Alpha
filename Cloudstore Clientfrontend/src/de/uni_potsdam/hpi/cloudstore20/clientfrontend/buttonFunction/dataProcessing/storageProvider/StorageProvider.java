@@ -1,88 +1,34 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class StorageProvider implements StorageProviderInterface{
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.STORAGE_PROVIDER_CONFIG;
+
+public abstract class StorageProvider implements StorageProviderInterface {
 
 	protected String providerName;
-	protected String location = "";
+	protected String location = null;
 	protected StorageProviderConfig config;
 	private int processStatus = 0;
-	
-	
-	protected String keys[] = {null, null};
-	
+
+	protected Map<STORAGE_PROVIDER_CONFIG, String> configData = new HashMap<STORAGE_PROVIDER_CONFIG, String>();
+
+	// TODO: diese werte in die Config auslagern!
 	protected static String downloadFolder = "download"; // temp-ordner!
 	protected String remoteFolderName = "cloudstore20";
-	protected boolean doNotLoadConfig = false;
-	
-	private static String config_file = "keys.conf";
-	private static String config_separator = ":::";
-		
+
 	public StorageProvider(String providerName, String location) throws StorageProviderException {
 
 		this.providerName = providerName;
 		this.location = location;
 
-		try {
-			this.loadConfig();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new StorageProviderException(e);
-		}
+		StorageProviderConfig.getInstance();
 
-	}
-
-	public StorageProvider(String providerName) throws StorageProviderException {
-
-		this.providerName = providerName;
-
-		try {
-			this.loadConfig();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new StorageProviderException(e);
-		}
-
-	}
-
-	private void loadConfig() throws StorageProviderException, IOException {
-		if(this.doNotLoadConfig) return;
-		InputStream fis;
-		BufferedReader br;
-		String line;
-		File configFile = null;
-		
-		configFile = new File(StorageProvider.config_file);
-		if(!configFile.exists()){
-			throw new StorageProviderException("Please create a configuration file for the Providers!");
-		}
-		
-		fis = new FileInputStream(configFile);
-		br = new BufferedReader(new InputStreamReader(fis));
-		boolean configFound = false;
-		while ((line = br.readLine()) != null) {
-			if(line.length() == 0) continue; 
-		    String split[] = line.split(StorageProvider.config_separator);
-		    assert split.length == 3: "invalid config line: " + line;
-		    
-		    if(!split[0].equals(this.configKey())) continue;
-		    this.keys[0] = split[1];
-		    this.keys[1] = split[2];
-		    
-		    configFound = true;
-		    break;
-		}
-
-		br.close();
-		
-		if(!configFound){
-			throw new StorageProviderException(
-					String.format(
-							"no config was found for %s in %s", 
-							this.configKey(),
-							configFile.getAbsolutePath()));
-		}
 	}
 
 	public int getProcessStatus() {
@@ -101,7 +47,7 @@ public abstract class StorageProvider implements StorageProviderInterface{
 
 	public String getCompleteProviderName() {
 
-		String name = providerName;
+		String name = this.providerName;
 		if (this.location != null) {
 			name += "#" + this.location;
 		}
@@ -114,39 +60,43 @@ public abstract class StorageProvider implements StorageProviderInterface{
 
 	}
 
-
 	protected void closeStream(OutputStream os) throws StorageProviderException {
+
 		try {
-			if(os != null){
+			if (os != null) {
 				os.close();
 			}
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
 		}
 	}
-	
+
 	protected void closeStream(InputStream is) throws StorageProviderException {
+
 		try {
-			if(is != null){
+			if (is != null) {
 				is.close();
 			}
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
 		}
 	}
-	
+
 	protected abstract String getRemoteFolderName();
-	protected static String defaultLocation(){
+
+	protected static String defaultLocation() {
+
 		return "EU";
 	}
-	
-	protected String configKey(){
-		return this.providerName;
-	}
-	
+
+	// protected String configKey() {
+	//
+	// return this.providerName;
+	// }
+
 	static {
 		File downFolder = new File(downloadFolder);
-		if(!downFolder.isDirectory()){
+		if (!downFolder.isDirectory()) {
 			downFolder.mkdir();
 		}
 	}

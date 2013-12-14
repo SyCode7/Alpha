@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.OPTIMIZATION_FUNCTION;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.OPTIMIZATION_FUNCTION;
 
 public class UploadConfigTab extends TabElement {
 

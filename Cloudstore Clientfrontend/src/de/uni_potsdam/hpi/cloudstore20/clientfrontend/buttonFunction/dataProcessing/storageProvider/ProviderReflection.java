@@ -9,7 +9,7 @@ import static de.uni_potsdam.hpi.cloudstore20.clientfrontend.helper.Constants.*;
 public class ProviderReflection {
 
 	private static final String classLocation = "de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations.";
-	public static long MAX_PROVIDER_LIVING_TIME = 2 * HOUR;
+	public final static long MAX_PROVIDER_LIVING_TIME = 2 * HOUR;
 
 	private static Map<String, StorageProvider> providerList = new HashMap<String, StorageProvider>();
 	private static Map<String, Long> providerLivingTime = new HashMap<String, Long>();

@@ -3,26 +3,24 @@ package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.dialog.LoginDialog;
@@ -32,11 +30,9 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.MapTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.ProviderConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadConfigTab;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.UploadTab;
-import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.helper.UploadProgressbarContainer;
 import de.uni_potsdam.hpi.cloudstore20.meta.CloudstoreException;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.CloudstoreConfig;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.DATA_PROCESS_METHOD;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.IMAGE_CONTAINER;
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_CONFIG_CATEGORY;
 
 public class DefaultWindow {
 
@@ -216,8 +212,8 @@ public class DefaultWindow {
 
 	private void createOnly4DesignTabContent() {
 
-		TabItem tbtmUpload = new TabItem(tabFolder, SWT.NONE);
-		tbtmUpload.setText("Only4Designer");
+		TabItem tbtmProviderKonf = new TabItem(tabFolder, SWT.NONE);
+		tbtmProviderKonf.setText("Only4Designer");
 
 	}
 }

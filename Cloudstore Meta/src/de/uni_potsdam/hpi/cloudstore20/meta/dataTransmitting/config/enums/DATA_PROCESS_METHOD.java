@@ -1,4 +1,4 @@
-package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config;
+package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums;
 
 public enum DATA_PROCESS_METHOD {
 
@@ -6,7 +6,7 @@ public enum DATA_PROCESS_METHOD {
 			IMAGE_CONTAINER.Test, IMAGE_CONTAINER.Test), preChunking("PreChunking", "Chunking Data", IMAGE_CONTAINER.Test,
 			IMAGE_CONTAINER.Test), preSlicing("PreSlicing", "Slicing Data", IMAGE_CONTAINER.Test, IMAGE_CONTAINER.Test), uploadOptimization(
 			"UploadOptimizer", "optimize Data for Upload", IMAGE_CONTAINER.Test, IMAGE_CONTAINER.Test), upload("Upload",
-			"Uploading Data", IMAGE_CONTAINER.File, IMAGE_CONTAINER.Cloud);
+			"Uploading Data", IMAGE_CONTAINER.File, IMAGE_CONTAINER.Cloud), filePostProcessing("FilePostProcessing", "Post-Processing original File", IMAGE_CONTAINER.Test, IMAGE_CONTAINER.Test);
 
 	private String className;
 	private String desc;

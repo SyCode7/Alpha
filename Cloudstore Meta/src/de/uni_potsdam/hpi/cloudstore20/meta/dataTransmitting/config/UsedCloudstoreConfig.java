@@ -3,6 +3,8 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.PROVIDER_ENUM;
+
 public class UsedCloudstoreConfig extends CloudstoreConfig {
 
 	private static final long serialVersionUID = 2834799719659816267L;
@@ -12,7 +14,8 @@ public class UsedCloudstoreConfig extends CloudstoreConfig {
 
 	public UsedCloudstoreConfig(int k, int m, Set<PROVIDER_ENUM> provider, CloudstoreConfig base) {
 
-		super(base.getMethods(), provider, base.getOptimizationOrdering(), base.getNumberOfNines(), base.getMaxCosts());
+		super(base.getMethods(), provider, base.getOptimizationOrdering(), base.getNumberOfNines(), base.getMaxCosts(), base
+				.getFilePostHandling());
 		this.k = k;
 		this.m = m;
 	}
