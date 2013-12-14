@@ -1,9 +1,13 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.impl.rest.httpclient.GoogleStorageService;
@@ -52,20 +56,35 @@ public class GoogleStorageProvider extends StorageProvider {
 	@Override
 	public String uploadFile(File file) throws StorageProviderException {
 
+		FileInputStream fis = null;
 		try {
-			GSObject gsFile = new GSObject(file);
-			// long t1,t2;
-			// t1 = System.currentTimeMillis();
-			gsFile = this.getService().putObject(this.getRemoteFolderName(), gsFile);
-			// t2 = System.currentTimeMillis();
-
-			return file.getName();// this.returnValue(file.getName(), t1, t2, remoteFolderName);
-		} catch (ServiceException e) {
-			throw new StorageProviderException(this.providerName, e);
+			class Uploader implements Callable<Boolean> {
+				GoogleStorageService service = null;
+				String remoteFolder = null;
+				GSObject s3File = null;
+				
+				Uploader(GoogleStorageService service, String remoteFolder, GSObject gsObject) { 
+		        	this.service = service; this.remoteFolder = remoteFolder; this.s3File = gsObject;}
+		        public Boolean call() throws ServiceException{
+		        	service.putObject(remoteFolder, s3File);
+		            return true; 
+		        }
+		    }
+			fis = new FileInputStream(file);
+			this.waitAndUpdateStatus(file.length(), fis.getChannel(), 
+					new Uploader(this.getService(), this.getRemoteFolderName(), new GSObject(file)));
+			
+			return file.getName();
 		} catch (NoSuchAlgorithmException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} finally {
+			this.closeStream(fis);
 		}
 	}
 
@@ -74,20 +93,32 @@ public class GoogleStorageProvider extends StorageProvider {
 
 		FileOutputStream fos = null;
 		try {
-			// long t1,t2;
+			class Downloader implements Callable<Boolean> {
+				InputStream is = null; 
+				FileOutputStream fos = null;
+				public Downloader(InputStream fis, FileOutputStream fos) { this.is = fis; this.fos = fos;}
+				@Override
+				public Boolean call() throws Exception {
+					FileHelper.copyStream(is, fos, 3);
+					return true;
+				}
+			}
 
-			GSObject gsFile = this.getService().getObject(this.getRemoteFolderName(), fileID);
+			final GSObject gsFile = this.getService().getObject(this.getRemoteFolderName(), fileID);
 			File localFile = new File(downloadFolder + File.separator + fileID);
 			fos = new FileOutputStream(localFile);
 
-			// t1 = System.currentTimeMillis();
-			FileHelper.copyStream(gsFile.getDataInputStream(), fos);
-			// t2 = System.currentTimeMillis();
-
-			return localFile;// this.returnValue(true, t1, t2, fileID, remoteFolderName);
+			this.waitAndUpdateStatus(gsFile.getContentLength(), fos.getChannel(), 
+					new Downloader(gsFile.getDataInputStream(), fos));
+			
+			return localFile;
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} finally {
 			this.closeStream(fos);

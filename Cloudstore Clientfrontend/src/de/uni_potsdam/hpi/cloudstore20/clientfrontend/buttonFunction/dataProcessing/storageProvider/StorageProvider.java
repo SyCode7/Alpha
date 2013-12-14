@@ -114,7 +114,7 @@ public abstract class StorageProvider implements StorageProviderInterface {
 			} catch (TimeoutException e) {continue;} 
 		}
 		res.get();
-		if(oldStatus < 100)
+		if(newStatus < 100)
 			this.updateProcessStatus(100);
 	}
 

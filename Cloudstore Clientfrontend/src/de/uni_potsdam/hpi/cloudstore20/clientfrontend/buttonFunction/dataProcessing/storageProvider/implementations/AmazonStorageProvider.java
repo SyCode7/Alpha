@@ -1,11 +1,16 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.buttonFunction.dataProcessing.storageProvider.implementations;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.jets3t.service.S3Service;
+import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.model.S3Bucket;
@@ -62,16 +67,36 @@ public class AmazonStorageProvider extends StorageProvider {
 	@Override
 	public String uploadFile(File file) throws StorageProviderException {
 
+		FileInputStream fis = null;
 		try {
-			S3Object s3File = new S3Object(file);
-			s3File = this.getService().putObject(this.getRemoteFolderName(), s3File);
+			class Uploader implements Callable<Boolean> {
+				S3Service service = null;
+				String remoteFolder = null;
+				S3Object s3File = null;
+				
+				Uploader(S3Service service, String remoteFolder, S3Object s3File) { 
+		        	this.service = service; this.remoteFolder = remoteFolder; this.s3File = s3File;}
+		        public Boolean call() throws S3ServiceException{
+		        	service.putObject(remoteFolder, s3File);
+		            return true; 
+		        }
+		    }
+			
+			fis = new FileInputStream(file);
+			this.waitAndUpdateStatus(file.length(), fis.getChannel(), 
+					new Uploader(this.getService(), this.getRemoteFolderName(), new S3Object(file)));
+			
 			return file.getName();
-		} catch (ServiceException e) {
-			throw new StorageProviderException(this.providerName, e);
 		} catch (NoSuchAlgorithmException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
 			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} finally {
+			this.closeStream(fis);
 		}
 	}
 
@@ -80,21 +105,32 @@ public class AmazonStorageProvider extends StorageProvider {
 
 		FileOutputStream fos = null;
 		try {
-			// long t1,t2;
-			S3Object gsFile;
-			gsFile = this.getService().getObject(this.getRemoteFolderName(), fileID);
+			S3Object gsFile = this.getService().getObject(this.getRemoteFolderName(), fileID);
 
 			File localFile = new File(downloadFolder + File.separator + fileID);
 			fos = new FileOutputStream(localFile);
 
-			// t1 = System.currentTimeMillis();
-			FileHelper.copyStream(gsFile.getDataInputStream(), fos, 3);
-			// t2 = System.currentTimeMillis();
-
+			class Downloader implements Callable<Boolean> {
+				InputStream is = null; 
+				FileOutputStream fos = null;
+				public Downloader(InputStream fis, FileOutputStream fos) { this.is = fis; this.fos = fos;}
+				@Override
+				public Boolean call() throws Exception {
+					FileHelper.copyStream(is, fos, 3);
+					return true;
+				}
+			}
+			long fileSize = gsFile.getContentLength();
+			this.waitAndUpdateStatus(fileSize, fos.getChannel(), new Downloader(gsFile.getDataInputStream(), fos));
+			
 			return localFile;
 		} catch (ServiceException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} catch (IOException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (InterruptedException e) {
+			throw new StorageProviderException(this.providerName, e);
+		} catch (ExecutionException e) {
 			throw new StorageProviderException(this.providerName, e);
 		} finally {
 			this.closeStream(fos);

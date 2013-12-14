@@ -22,7 +22,7 @@ import de.uni_potsdam.hpi.cloudstore20.meta.helper.HelperException;
 
 public class StorageProviderTest {
 
-	StorageProvider provider = ProviderReflection.getProvider(PROVIDER_ENUM.AZURE_US);
+	StorageProvider provider = ProviderReflection.getProvider(PROVIDER_ENUM.GOOGLE_US);
 	String fName = "1mb";
 	String workDirName = "provTest";
 
@@ -30,7 +30,6 @@ public class StorageProviderTest {
 
 	@Before
 	public void setUp() throws Exception {
-		
 		File origFile = new File("testdata" + File.separator + fName);
 		file = new File(workDirName + File.separator + fName);
 		File workDir = new File(workDirName);
