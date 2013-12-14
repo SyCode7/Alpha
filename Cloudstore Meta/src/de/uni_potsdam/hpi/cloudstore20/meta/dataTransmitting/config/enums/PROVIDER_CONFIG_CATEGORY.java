@@ -2,9 +2,12 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums;
 
 public enum PROVIDER_CONFIG_CATEGORY {
 
-	AzureUS("AzureUS-Username-String", "AzureUS-PWD-String"), AzureEU("AzureEU-Username-String", "AzureEU-PWD-String"), Google(
-			"Google-Username-String", "Google-PWD-String"), Amazon("Amazon-Username-String", "Amazon-PWD-String"), Rackspace(
-			"Rackspace-Username-String", "Rackspace-PWD-String"), HPStorage("HP_Storage-Username-String", "HP_Storage-PWD-String");
+	AzureUS("AccountName", "AccountKey"), 
+	AzureEU("AccountName", "AccountKey"), 
+	Google("AccessKey", "SecretKey"), 
+	Amazon("AccessKey", "SecretKey"), 
+	Rackspace("Username", "Password"), 
+	HPStorage("ApiKey", "ApiSecret");
 
 	private String pwd;
 	private String username;
