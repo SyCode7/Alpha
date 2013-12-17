@@ -88,8 +88,8 @@ public class ProviderConfigTab extends TabElement {
 				StorageProviderConfig.getInstance().setProviderInformation(getSelectedProviderCat(),
 						STORAGE_PROVIDER_CONFIG.Username, username.getText());
 				// TODO: entfernen
-				System.out.println(StorageProviderConfig.getInstance().get(getSelectedProviderCat(),
-						STORAGE_PROVIDER_CONFIG.Username));
+				// System.out.println(StorageProviderConfig.getInstance().get(getSelectedProviderCat(),
+				// STORAGE_PROVIDER_CONFIG.Username));
 
 			}
 		});
@@ -107,8 +107,8 @@ public class ProviderConfigTab extends TabElement {
 				StorageProviderConfig.getInstance().setProviderInformation(getSelectedProviderCat(),
 						STORAGE_PROVIDER_CONFIG.Password, password.getText());
 				// TODO: entfernen
-				System.out.println(StorageProviderConfig.getInstance().get(getSelectedProviderCat(),
-						STORAGE_PROVIDER_CONFIG.Password));
+				// System.out.println(StorageProviderConfig.getInstance().get(getSelectedProviderCat(),
+				// STORAGE_PROVIDER_CONFIG.Password));
 
 			}
 		});
