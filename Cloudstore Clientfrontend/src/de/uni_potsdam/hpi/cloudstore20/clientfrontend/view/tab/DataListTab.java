@@ -18,7 +18,6 @@ import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataList;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListElement;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListException;
-import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList.DataListTest;
 
 public class DataListTab extends TabElement {
 
@@ -57,10 +56,10 @@ public class DataListTab extends TabElement {
 			try {
 				dl = ServletCommunicator.getDataList();
 			} catch (ServletCommunicationException e) {
-				dl = DataListTest.getSampleDataList("fe_excep");
+				dl = DataList.getSampleDataList("fe_excep");
 			}
 		} else {
-			dl = DataListTest.getSampleDataList("frontend");
+			dl = DataList.getSampleDataList("frontend");
 		}
 
 		return dl;
@@ -116,8 +115,8 @@ public class DataListTab extends TabElement {
 			DataList content = this.loadContent();
 			this.buildTreeContent(tree, content);
 		} catch (DataListException e1) {
+			//TODO: ordentliches Exceptionhandling
 			e1.printStackTrace();
-
 			this.loadDefault(tree);
 
 		}

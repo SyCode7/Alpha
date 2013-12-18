@@ -24,7 +24,9 @@ public abstract class DataTransmittingClass implements Serializable {
 			Object o = ois.readObject();
 			ois.close();
 			return o;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
+			throw new DataTransmittingException(e.getMessage(), e.getCause());
+		} catch (ClassNotFoundException e) {
 			throw new DataTransmittingException(e.getMessage(), e.getCause());
 		}
 	}

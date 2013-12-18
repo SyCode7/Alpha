@@ -2,7 +2,6 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.dataList;
 
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,40 +23,7 @@ public class DataListTest {
 
 		this.content = "rO0ABXNyAEdkZS51bmlfcG90c2RhbS5ocGkuY2xvdWRzdG9yZTIwLm1ldGEuZGF0YVRyYW5zbWl0dGluZy5kYXRhTGlzdC5EYXRhTGlzdF9/M0egphY4AgABTAAHY29udGVudHQAEExqYXZhL3V0aWwvTGlzdDt4cgBLZGUudW5pX3BvdHNkYW0uaHBpLmNsb3Vkc3RvcmUyMC5tZXRhLmRhdGFUcmFuc21pdHRpbmcuRGF0YVRyYW5zbWl0dGluZ0NsYXNzVlB3dzdeOXsCAAB4cHNyABRqYXZhLnV0aWwuTGlua2VkTGlzdAwpU11KYIgiAwAAeHB3BAAAAARzcgBOZGUudW5pX3BvdHNkYW0uaHBpLmNsb3Vkc3RvcmUyMC5tZXRhLmRhdGFUcmFuc21pdHRpbmcuZGF0YUxpc3QuRGF0YUxpc3RFbGVtZW50fyBTf6gv5YoCAANaAAhpc0ZvbGRlckwADWZvbGRlckNvbnRlbnR0AElMZGUvdW5pX3BvdHNkYW0vaHBpL2Nsb3Vkc3RvcmUyMC9tZXRhL2RhdGFUcmFuc21pdHRpbmcvZGF0YUxpc3QvRGF0YUxpc3Q7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO3hwAHB0AAtzZXRVcF9maWxlMXNxAH4ABgBwdAALc2V0VXBfZmlsZTJzcQB+AAYBc3EAfgAAc3EAfgAEdwQAAAACc3EAfgAGAHB0AAtzZXRVcF9maWxlMXNxAH4ABgFzcQB+AABzcQB+AAR3BAAAAAFzcQB+AAYAcHQAC3NldFVwX2ZpbGUxeHQADHNldFVwX2ZvbGRlcnh0AAxzZXRVcF9mb2xkZXJzcQB+AAYAcHQAC3NldFVwX2ZpbGUzeA==";
 
-		this.dl = DataListTest.getSampleDataList("setUp");
-	}
-
-	public static DataList getSampleDataList(String prefix) throws DataListException {
-
-		List<DataListElement> content1 = new LinkedList<DataListElement>();
-		List<DataListElement> content2 = new LinkedList<DataListElement>();
-		List<DataListElement> content3 = new LinkedList<DataListElement>();
-
-		content3.add(new DataListElement(prefix + "_file1"));
-
-		content2.add(new DataListElement(prefix + "_file1"));
-		content2.add(new DataListElement(prefix + "_folder", DataListTest.getDataList(content3)));
-
-		content1.add(new DataListElement(prefix + "_file1"));
-		content1.add(new DataListElement(prefix + "_file2"));
-		content1.add(new DataListElement(prefix + "_folder", DataListTest.getDataList(content2)));
-		content1.add(new DataListElement(prefix + "_file3"));
-
-		return DataListTest.getDataList(content1);
-
-	}
-
-	private static DataList getDataList(List<DataListElement> content) throws DataListException {
-
-		Constructor<?> constructor;
-		try {
-			constructor = DataList.class.getDeclaredConstructor(List.class);
-			constructor.setAccessible(true);
-			return (DataList) constructor.newInstance(content);
-		} catch (Exception e) {
-			throw new DataListException(e.getMessage(), e.getCause());
-		}
-
+		this.dl = DataList.getSampleDataList("setUp");
 	}
 
 	@After

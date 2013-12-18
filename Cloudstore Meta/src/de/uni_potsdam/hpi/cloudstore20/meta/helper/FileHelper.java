@@ -2,9 +2,9 @@ package de.uni_potsdam.hpi.cloudstore20.meta.helper;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.OutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.SocketException;
 import java.security.MessageDigest;
@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class FileHelper {
-	
+
 	private static final int bufferSize = 32 * 1024;
 
 	public static boolean generateRandomContentFile(String filePath, long fileSize) {
@@ -51,9 +51,12 @@ public class FileHelper {
 		byte[] b;
 		try {
 			b = FileHelper.createChecksum(file);
-		} catch (NoSuchAlgorithmException | IOException e) {
+		} catch (NoSuchAlgorithmException e) {
+			throw new HelperException(e.getMessage(), e.getCause());
+		} catch (IOException e) {
 			throw new HelperException(e.getMessage(), e.getCause());
 		}
+
 		String result = "";
 
 		for (int i = 0; i < b.length; i++) {
@@ -80,7 +83,6 @@ public class FileHelper {
 		fis.close();
 		return complete.digest();
 	}
-	
 
 	public static void copyStream(InputStream is, OutputStream os) throws IOException {
 
@@ -90,7 +92,7 @@ public class FileHelper {
 	public static void copyStream(InputStream is, OutputStream os, int maxTries) throws IOException {
 
 		boolean again = false;
-		do{
+		do {
 			again = false;
 			try {
 				byte[] ioBuf = new byte[bufferSize];
@@ -105,7 +107,7 @@ public class FileHelper {
 			}
 			maxTries--;
 		} while (again && maxTries > 0);
-		
+
 	}
 
 }
