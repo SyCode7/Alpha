@@ -169,10 +169,12 @@ public class DataProcessor {
 			UsedCloudstoreConfig ucc = this.currentJob.getValue();
 			for (PROVIDER_ENUM prov : ucc.getConfiguredProvider()) {
 				String providerName = prov.toString();
-				providerName += "#k:"+ ucc.getK() +"_m:" + ucc.getM();
+				providerName += "#k:" + ucc.getK() + "_m:" + ucc.getM();
 				try {
 					dpt.addProviderFileContainer(new ProviderFileContainer(new MockupStorageProvider(providerName)));
-				} catch (ServletCommunicationException | StorageProviderException e) {
+				} catch (ServletCommunicationException e) {
+					e.printStackTrace();
+				} catch (StorageProviderException e) {
 					e.printStackTrace();
 				}
 			}

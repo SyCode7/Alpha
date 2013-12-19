@@ -73,7 +73,9 @@ public class ServletCommunicator {
 			}
 
 			return (DataList) DataTransmittingClass.fromString(answer);
-		} catch (IOException | DataTransmittingException e) {
+		} catch (IOException e) {
+			throw new ServletCommunicationException(e.getMessage(), e.getCause());
+		} catch (DataTransmittingException e) {
 			throw new ServletCommunicationException(e.getMessage(), e.getCause());
 		}
 

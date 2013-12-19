@@ -28,7 +28,9 @@ public class StorageProviderConfig {
 
 		try {
 			this.loadConfig();
-		} catch (StorageProviderException | IOException e) {
+		} catch (StorageProviderException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
