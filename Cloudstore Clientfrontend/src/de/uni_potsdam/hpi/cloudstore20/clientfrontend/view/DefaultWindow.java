@@ -87,7 +87,7 @@ public class DefaultWindow {
 		 */
 		this.shell = new Shell(DefaultWindow.display, SWT.NO_TRIM | SWT.ON_TOP);
 
-		this.shell.setSize(643, 447);
+		this.shell.setSize(800, 600);
 		this.shell.setText("Cloudstore 2.0");
 		this.shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 
