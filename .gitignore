@@ -1,3 +1,6 @@
 .metadata/
 .git/
 Servers/
+*.project
+*.project
+*.project
