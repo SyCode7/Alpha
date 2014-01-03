@@ -15,7 +15,7 @@ public class UsedCloudstoreConfig extends CloudstoreConfig {
 	public UsedCloudstoreConfig(int k, int m, Set<PROVIDER_ENUM> provider, CloudstoreConfig base) {
 
 		super(base.getMethods(), provider, base.getOptimizationOrdering(), base.getNumberOfNines(), base.getMaxCosts(), base
-				.getFilePostHandling());
+				.getFilePostHandling(), base.getMaxPerformance());
 		this.k = k;
 		this.m = m;
 	}
