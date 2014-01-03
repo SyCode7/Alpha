@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -31,37 +32,21 @@ public class UploadConfigTab extends TabElement {
 		TabItem tbtmUploadkonf = new TabItem(this.tabFolder, SWT.NONE);
 		tbtmUploadkonf.setText("Uploadkonfiguration");
 
-		SashForm sashForm_5 = new SashForm(this.tabFolder, SWT.NONE);
-		tbtmUploadkonf.setControl(sashForm_5);
+		SashForm sashForm_MainFrame = new SashForm(this.tabFolder, SWT.VERTICAL);
+		tbtmUploadkonf.setControl(sashForm_MainFrame);
 
-		SashForm sashForm_6 = new SashForm(sashForm_5, SWT.VERTICAL);
+		SashForm sashForm_ConfigMainFrame = new SashForm(sashForm_MainFrame, SWT.NONE);
 
-		Label lblNewLabel_3 = new Label(sashForm_6, SWT.NONE);
-		lblNewLabel_3.setText("Erasure [k:m]");
+		SashForm sashForm_StandardConfig = new SashForm(sashForm_ConfigMainFrame, SWT.VERTICAL);
 
-		new Composite(sashForm_6, SWT.NONE);
-
-		Button uploadopti = new Button(sashForm_6, SWT.CHECK);
-		uploadopti.setText("Uploadoptimierung");
-		Button uploadspli = new Button(sashForm_6, SWT.CHECK);
-		uploadspli.setText("Uploadsplitting");
-		Button dataEncr = new Button(sashForm_6, SWT.CHECK);
-		dataEncr.setText("Daten verschl\u00FCsseln");
-
-		sashForm_6.setWeights(new int[] { 1, 1, 1, 1, 1 });
-
-		new Composite(sashForm_5, SWT.NONE);
-
-		SashForm sashForm = new SashForm(sashForm_5, SWT.VERTICAL);
-
-		Label lblNewLabel = new Label(sashForm, SWT.NONE);
+		Label lblNewLabel = new Label(sashForm_StandardConfig, SWT.NONE);
 		lblNewLabel.setText("Standardeinstellungen");
 
-		SashForm sashForm_2 = new SashForm(sashForm, SWT.VERTICAL);
+		SashForm sashForm_AvailabilityFrame = new SashForm(sashForm_StandardConfig, SWT.VERTICAL);
 
-		Label lblMindestverfgbarkeit = new Label(sashForm_2, SWT.NONE);
+		Label lblMindestverfgbarkeit = new Label(sashForm_AvailabilityFrame, SWT.NONE);
 		lblMindestverfgbarkeit.setText("Verf\u00FCgbarkeit (Anzahl Neuner)");
-		final Text verfuegbarkeit = new Text(sashForm_2, SWT.BORDER);
+		final Text verfuegbarkeit = new Text(sashForm_AvailabilityFrame, SWT.BORDER);
 		verfuegbarkeit.setText(String.valueOf(DefaultWindow.config.getNumberOfNines()));
 		verfuegbarkeit.addVerifyListener(new VerifyListener() {
 
@@ -78,16 +63,16 @@ public class UploadConfigTab extends TabElement {
 				}
 			}
 		});
-		sashForm_2.setWeights(new int[] { 1, 1 });
+		sashForm_AvailabilityFrame.setWeights(new int[] { 1, 1 });
 
-		new Composite(sashForm, SWT.NONE);
+		new Composite(sashForm_StandardConfig, SWT.NONE);
 
-		SashForm sashForm_3 = new SashForm(sashForm, SWT.VERTICAL);
+		SashForm sashForm_CostsFrame = new SashForm(sashForm_StandardConfig, SWT.VERTICAL);
 
-		Label lblMaximaleKostenn = new Label(sashForm_3, SWT.NONE);
+		Label lblMaximaleKostenn = new Label(sashForm_CostsFrame, SWT.NONE);
 		lblMaximaleKostenn.setText("Maximale Kosten (1..n)");
-		final Text kosten = new Text(sashForm_3, SWT.BORDER);
-		kosten.setText(String.valueOf(DefaultWindow.config.getMaxCosts()));
+		final Text kosten = new Text(sashForm_CostsFrame, SWT.BORDER);
+		kosten.setText("1.0");
 		kosten.addVerifyListener(new VerifyListener() {
 
 			@Override
@@ -109,22 +94,54 @@ public class UploadConfigTab extends TabElement {
 			}
 
 		});
-		sashForm_3.setWeights(new int[] { 1, 1 });
+		sashForm_CostsFrame.setWeights(new int[] { 1, 1 });
 
-		new Composite(sashForm, SWT.NONE);
+		new Composite(sashForm_StandardConfig, SWT.NONE);
 
-		sashForm.setWeights(new int[] { 1, 1, 1, 1, 1 });
+		SashForm sashForm_PerformanceFrame = new SashForm(sashForm_StandardConfig, SWT.VERTICAL);
 
-		new Composite(sashForm_5, SWT.NONE);
+		Label lblMaximaleperformancen = new Label(sashForm_PerformanceFrame, SWT.NONE);
+		lblMaximaleperformancen.setText("Maximale \"Performance\" (0..n)");
 
-		SashForm sashForm_7 = new SashForm(sashForm_5, SWT.VERTICAL);
+		final Text performance = new Text(sashForm_PerformanceFrame, SWT.BORDER);
+		performance.setText("0.0");
+		performance.addVerifyListener(new VerifyListener() {
 
-		Label lblAutomatischeOptimierung = new Label(sashForm_7, SWT.NONE);
+			@Override
+			public void verifyText(VerifyEvent e) {
+
+				final String oldS = performance.getText();
+				final String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
+
+				try {
+					double value = Double.valueOf(newS);
+					if (value < 0.0d) {
+						e.doit = false;
+					} else {
+						DefaultWindow.config.setMaxPerformance(value);
+					}
+				} catch (final NumberFormatException numberFormatException) {
+					e.doit = false;
+				}
+			}
+
+		});
+		sashForm_PerformanceFrame.setWeights(new int[] { 1, 1 });
+
+		new Composite(sashForm_StandardConfig, SWT.NONE);
+
+		sashForm_StandardConfig.setWeights(new int[] { 1, 2, 1, 2, 1, 2, 1 });
+
+		new Composite(sashForm_ConfigMainFrame, SWT.NONE);
+
+		SashForm sashForm_AutomaticOptimizing = new SashForm(sashForm_ConfigMainFrame, SWT.VERTICAL);
+
+		Label lblAutomatischeOptimierung = new Label(sashForm_AutomaticOptimizing, SWT.NONE);
 		lblAutomatischeOptimierung.setText("automatische Optimierung");
 
-		Label lblAusf = new Label(sashForm_7, SWT.NONE);
+		Label lblAusf = new Label(sashForm_AutomaticOptimizing, SWT.NONE);
 		lblAusf.setText("1. Stufe");
-		final Combo ersteStufe = new Combo(sashForm_7, SWT.NONE);
+		final Combo ersteStufe = new Combo(sashForm_AutomaticOptimizing, SWT.NONE);
 		ersteStufe.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -135,9 +152,9 @@ public class UploadConfigTab extends TabElement {
 			}
 		});
 
-		Label lblKosten = new Label(sashForm_7, SWT.NONE);
+		Label lblKosten = new Label(sashForm_AutomaticOptimizing, SWT.NONE);
 		lblKosten.setText("2. Stufe");
-		final Combo zweiteStufe = new Combo(sashForm_7, SWT.NONE);
+		final Combo zweiteStufe = new Combo(sashForm_AutomaticOptimizing, SWT.NONE);
 		zweiteStufe.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -148,11 +165,11 @@ public class UploadConfigTab extends TabElement {
 			}
 		});
 
-		Label lblGeschw = new Label(sashForm_7, SWT.NONE);
+		Label lblGeschw = new Label(sashForm_AutomaticOptimizing, SWT.NONE);
 		lblGeschw.setText("3. Stufe");
-		final Combo dritteStufe = new Combo(sashForm_7, SWT.NONE);
+		final Combo dritteStufe = new Combo(sashForm_AutomaticOptimizing, SWT.NONE);
 
-		new Composite(sashForm_7, SWT.NONE);
+		new Composite(sashForm_AutomaticOptimizing, SWT.NONE);
 		dritteStufe.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -186,8 +203,34 @@ public class UploadConfigTab extends TabElement {
 
 		}
 
-		sashForm_7.setWeights(new int[] { 1, 1, 1, 1, 1, 1, 1, 1 });
-		sashForm_5.setWeights(new int[] { 100, 10, 100, 10, 100 });
+		sashForm_AutomaticOptimizing.setWeights(new int[] { 1, 1, 1, 1, 1, 1, 1, 1 });
+		sashForm_ConfigMainFrame.setWeights(new int[] { 10, 1, 10 });
+
+		new Composite(sashForm_MainFrame, SWT.NONE);
+
+		SashForm sashForm_ExampleMainFrame = new SashForm(sashForm_MainFrame, SWT.VERTICAL);
+
+		Label lblVorschau = new Label(sashForm_ExampleMainFrame, SWT.NONE);
+		lblVorschau.setText("Vorschau");
+
+		new Composite(sashForm_ExampleMainFrame, SWT.NONE);
+
+		List list_Examples = new List(sashForm_ExampleMainFrame, SWT.BORDER);
+
+		new Composite(sashForm_ExampleMainFrame, SWT.NONE);
+
+		SashForm sashForm_ExampleButtonFrame = new SashForm(sashForm_ExampleMainFrame, SWT.NONE);
+
+		Button btnSimulate = new Button(sashForm_ExampleButtonFrame, SWT.NONE);
+		btnSimulate.setText("Simulate");
+
+		new Composite(sashForm_ExampleButtonFrame, SWT.NONE);
+		sashForm_ExampleButtonFrame.setWeights(new int[] { 1, 4 });
+		sashForm_ExampleMainFrame.setWeights(new int[] { 2, 1, 10, 1, 3 });
+
+		new Composite(sashForm_MainFrame, SWT.NONE);
+		sashForm_MainFrame.setWeights(new int[] { 20, 1, 8, 1 });
+
 	}
 
 	@Override

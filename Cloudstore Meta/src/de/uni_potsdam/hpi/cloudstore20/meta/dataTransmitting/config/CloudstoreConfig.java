@@ -22,6 +22,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	private FILE_POST_HANDLING filePostHandling;
 	private double maxCosts;
 	private int numberOfNines;
+	private double maxPerformance;
 
 	// TODO: Datenshema für gespeicherte Passwörter etc.
 	// aufpassen, dass Zugangsdaten NICHT zum Serverübertragen werden
@@ -31,7 +32,8 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	private boolean decideAlone4BestConfigToUse = true;
 
 	protected CloudstoreConfig(List<DATA_PROCESS_METHOD> methods, Set<PROVIDER_ENUM> provider,
-			OPTIMIZATION_FUNCTION[] optimizationOrdering, int numberOfNines, double maxCosts, FILE_POST_HANDLING fph) {
+			OPTIMIZATION_FUNCTION[] optimizationOrdering, int numberOfNines, double maxCosts, FILE_POST_HANDLING fph,
+			double maxPerformance) {
 
 		this.optimizationOrdering = optimizationOrdering;
 		this.configuredProvider = provider;
@@ -39,6 +41,7 @@ public class CloudstoreConfig extends DataTransmittingClass {
 		this.numberOfNines = numberOfNines;
 		this.maxCosts = maxCosts;
 		this.filePostHandling = fph;
+		this.maxPerformance = maxPerformance;
 	}
 
 	@Override
@@ -125,8 +128,9 @@ public class CloudstoreConfig extends DataTransmittingClass {
 
 		double maxCosts = 2;
 		int numberOfNines = 5;
+		double maxPerformance = 5;
 
-		return new CloudstoreConfig(methods, provider, opti, numberOfNines, maxCosts, FILE_POST_HANDLING.Stub);
+		return new CloudstoreConfig(methods, provider, opti, numberOfNines, maxCosts, FILE_POST_HANDLING.Stub, maxPerformance);
 
 	}
 
@@ -150,6 +154,17 @@ public class CloudstoreConfig extends DataTransmittingClass {
 	public FILE_POST_HANDLING getFilePostHandling() {
 
 		return this.filePostHandling;
+	}
+
+	public void setMaxPerformance(double maxPerformance) {
+
+		this.maxPerformance = maxPerformance;
+
+	}
+
+	public double getMaxPerformance() {
+
+		return this.maxPerformance;
 	}
 
 }
