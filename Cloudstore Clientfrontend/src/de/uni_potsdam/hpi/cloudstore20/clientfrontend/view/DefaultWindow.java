@@ -53,7 +53,7 @@ public class DefaultWindow {
 
 	private void loadConfig() {
 
-		//TODO: richtig die Config laden
+		// TODO: richtig die Config laden
 		DefaultWindow.config = CloudstoreConfig.loadDefault();
 	}
 
@@ -161,7 +161,6 @@ public class DefaultWindow {
 
 		DefaultWindow.tabsToUpdate.add(new UploadTab(tabFolder, this));
 
-
 		this.createOnly4DesignTabContent();
 	}
 
@@ -203,6 +202,6 @@ public class DefaultWindow {
 
 		TabItem tbtmUploadkonf = new TabItem(tabFolder, SWT.NONE);
 		tbtmUploadkonf.setText("Only4Designer");
-		
+
 	}
 }
