@@ -19,6 +19,9 @@ public class HasseDiagramm {
 
 	private Set<CloudraidNode> allNodes = new HashSet<CloudraidNode>();
 
+	public double bestPerformance;
+	public double bestCosts;
+
 	public HasseDiagramm(Set<PROVIDER_ENUM> providers, long fileSize) {
 
 		this.possibleProviders = providers;
@@ -37,7 +40,7 @@ public class HasseDiagramm {
 
 			for (int m = 0; m + k <= n; m++) {
 
-				// Alle Provider Kobinationen mit k+m Providern erzeugen
+				// Alle Provider Kombinationen mit k+m Providern erzeugen
 				ICombinatoricsVector<PROVIDER_ENUM> initialVector = Factory.createVector(this.possibleProviders);
 				Generator<PROVIDER_ENUM> gen = Factory.createSimpleCombinationGenerator(initialVector, k + m);
 				List<ICombinatoricsVector<PROVIDER_ENUM>> combiations = gen.generateAllObjects();
@@ -52,7 +55,7 @@ public class HasseDiagramm {
 
 					for (ICombinatoricsVector<PROVIDER_ENUM> combination_ : combiations_) {
 						this.allNodes.add(new CloudraidNode(k, m, combinationSet, this.translateToSet(combination_.getVector()),
-								this.fileSize));
+								this.fileSize, this));
 					}
 				}
 
@@ -60,9 +63,54 @@ public class HasseDiagramm {
 
 		}
 
+		this.getBestCosts();
+		this.getBestPerformanceTime();
+
 	}
 
-	public Set<CloudraidNode> filterNodes(double maxCosts, int numberOfNines) throws CloudstoreConfigException {
+	private void getBestPerformanceTime() {
+
+		double best = Double.MAX_VALUE;
+		for (PROVIDER_ENUM prov : PROVIDER_ENUM.values()) {
+			double value = 0;
+
+			value += this.fileSize / InMemDatabase.getInstance().getUploadSpeedFor(prov, this.fileSize);
+			value += this.fileSize / InMemDatabase.getInstance().getDownloadSpeedFor(prov, this.fileSize);
+
+			if (best > value) {
+				best = value;
+			}
+
+		}
+
+		this.bestPerformance = best;
+
+	}
+
+	private void getBestCosts() {
+
+		double bestValue = Double.MAX_VALUE;
+		for (PROVIDER_ENUM prov : PROVIDER_ENUM.values()) {
+			double value = 0;
+
+			value += (InMemDatabase.getInstance().getCostsPerWriteFor(prov) / 1024 / 1024) * (this.fileSize);
+
+			value += InMemDatabase.getInstance().getCostsForStorage(prov, this.fileSize);
+
+			value += (InMemDatabase.getInstance().getCostsPerRequestFor(prov) / 100000);
+
+			value += (InMemDatabase.getInstance().getCostsPerReadFor(prov) / 1024 / 1024) * (this.fileSize);
+
+			if (bestValue > value) {
+				bestValue = value;
+			}
+		}
+
+		this.bestCosts = bestValue;
+	}
+
+	public Set<CloudraidNode> filterNodes(double maxCosts, int numberOfNines, double maxPerformance)
+			throws CloudstoreConfigException {
 
 		Set<CloudraidNode> result = new HashSet<CloudraidNode>();
 
@@ -78,6 +126,9 @@ public class HasseDiagramm {
 				if (crn.getCostsInComparisonToBestSingleUpload() > maxCosts) {
 					continue;
 				}
+				if (crn.getPerformanceInComparisonToBestSingleUpload() > maxPerformance) {
+					continue;
+				}
 
 				result.add(crn);
 			} catch (Exception e) {
@@ -89,17 +140,23 @@ public class HasseDiagramm {
 
 	}
 
-	public Set<CloudraidNode> filterNodesCosts(double maxCosts) throws CloudstoreConfigException {
-
-		return this.filterNodes(maxCosts, 0);
-
-	}
-
-	public Set<CloudraidNode> filterNodesAvailability(int numberOfNines) throws CloudstoreConfigException {
-
-		return this.filterNodes(Double.MAX_VALUE, numberOfNines);
-
-	}
+	// public Set<CloudraidNode> filterNodes(double maxCosts, int numberOfNines) throws CloudstoreConfigException {
+	//
+	// return this.filterNodes(maxCosts, numberOfNines, Double.MAX_VALUE);
+	//
+	// }
+	//
+	// public Set<CloudraidNode> filterNodesCosts(double maxCosts) throws CloudstoreConfigException {
+	//
+	// return this.filterNodes(maxCosts, 0, Double.MAX_VALUE);
+	//
+	// }
+	//
+	// public Set<CloudraidNode> filterNodesAvailability(int numberOfNines) throws CloudstoreConfigException {
+	//
+	// return this.filterNodes(Double.MAX_VALUE, numberOfNines, Double.MAX_VALUE);
+	//
+	// }
 
 	public Set<CloudraidNode> getUnfiltered() {
 

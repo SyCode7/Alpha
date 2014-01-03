@@ -1,7 +1,11 @@
 package de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab;
 
+import java.util.LinkedList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
@@ -17,13 +21,23 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.DefaultWindow;
 import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.TabElement;
+import de.uni_potsdam.hpi.cloudstore20.clientfrontend.view.tab.helper.UploadConfigTabThread;
 import de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums.OPTIMIZATION_FUNCTION;
 
 public class UploadConfigTab extends TabElement {
 
+	private List list_Examples;
+	private java.util.List<String> listContent = new LinkedList<String>();
+	private boolean listIsInUsage = false;
+	private boolean somethingNew = false;
+
+	private static UploadConfigTab thisTab;
+
 	public UploadConfigTab(TabFolder folder, DefaultWindow window) {
 
 		super(folder, window);
+
+		UploadConfigTab.thisTab = this;
 	}
 
 	@Override
@@ -72,7 +86,7 @@ public class UploadConfigTab extends TabElement {
 		Label lblMaximaleKostenn = new Label(sashForm_CostsFrame, SWT.NONE);
 		lblMaximaleKostenn.setText("Maximale Kosten (1..n)");
 		final Text kosten = new Text(sashForm_CostsFrame, SWT.BORDER);
-		kosten.setText("1.0");
+		kosten.setText(String.valueOf(DefaultWindow.config.getMaxCosts()));
 		kosten.addVerifyListener(new VerifyListener() {
 
 			@Override
@@ -104,7 +118,7 @@ public class UploadConfigTab extends TabElement {
 		lblMaximaleperformancen.setText("Maximale \"Performance\" (0..n)");
 
 		final Text performance = new Text(sashForm_PerformanceFrame, SWT.BORDER);
-		performance.setText("0.0");
+		performance.setText(String.valueOf(DefaultWindow.config.getMaxPerformance()));
 		performance.addVerifyListener(new VerifyListener() {
 
 			@Override
@@ -215,7 +229,7 @@ public class UploadConfigTab extends TabElement {
 
 		new Composite(sashForm_ExampleMainFrame, SWT.NONE);
 
-		List list_Examples = new List(sashForm_ExampleMainFrame, SWT.BORDER);
+		list_Examples = new List(sashForm_ExampleMainFrame, SWT.BORDER);
 
 		new Composite(sashForm_ExampleMainFrame, SWT.NONE);
 
@@ -223,6 +237,17 @@ public class UploadConfigTab extends TabElement {
 
 		Button btnSimulate = new Button(sashForm_ExampleButtonFrame, SWT.NONE);
 		btnSimulate.setText("Simulate");
+		btnSimulate.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+
+				writeToList("Simulating...");
+
+				new UploadConfigTabThread(thisTab).start();
+
+			}
+		});
 
 		new Composite(sashForm_ExampleButtonFrame, SWT.NONE);
 		sashForm_ExampleButtonFrame.setWeights(new int[] { 1, 4 });
@@ -233,10 +258,41 @@ public class UploadConfigTab extends TabElement {
 
 	}
 
+	public void writeToList(String s) {
+
+		while (this.listIsInUsage) {}
+		this.listIsInUsage = true;
+		this.somethingNew = true;
+		this.listContent.add(s);
+		this.listIsInUsage = false;
+	}
+
+	public void writeToList(java.util.List<String> s) {
+
+		while (this.listIsInUsage) {}
+		this.listIsInUsage = true;
+		this.somethingNew = true;
+		this.listContent.addAll(s);
+		this.listIsInUsage = false;
+	}
+
 	@Override
 	protected void performContentUpdate() {
 
-		// TODO Auto-generated method stub
+		if (!this.somethingNew) {
+			return;
+		}
+
+		list_Examples.removeAll();
+		while (this.listIsInUsage) {}
+		this.listIsInUsage = true;
+		for (String s : this.listContent) {
+			list_Examples.add(s);
+
+			this.listContent.clear();
+			this.somethingNew = false;
+		}
+		this.listIsInUsage = false;
 
 	}
 

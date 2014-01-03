@@ -230,20 +230,12 @@ public class DataProcessor {
 			HasseDiagramm hd = new HasseDiagramm(config.getConfiguredProvider(), fileSize);
 			Set<CloudraidNode> nodes;
 			try {
-				nodes = hd.filterNodes(config.getMaxCosts(), config.getNumberOfNines());
+				nodes = hd.filterNodes(config.getMaxCosts(), config.getNumberOfNines(), config.getMaxPerformance());
 			} catch (CloudstoreConfigException e) {
 				throw new DataProcessingException(e.getMessage(), e.getCause());
 			}
 
-			for (OPTIMIZATION_FUNCTION of : config.getOptimizationOrdering()) {
-				if (of.equals(OPTIMIZATION_FUNCTION.AVAILABILITY)) {
-					nodes = this.getHighestAvail(nodes);
-				} else if (of.equals(OPTIMIZATION_FUNCTION.PERFORMANCE)) {
-					nodes = this.getHighestPerf(nodes);
-				} else if (of.equals(OPTIMIZATION_FUNCTION.PRICE)) {
-					nodes = this.getLowestCosts(nodes);
-				}
-			}
+			nodes = DataProcessor.applyOptimization(config, nodes);
 
 			// TODO: was passiert, wenn es wirklich mehrere wären?
 			// gleiches Problem wie manuelle auswahl?
@@ -269,7 +261,21 @@ public class DataProcessor {
 		return ucc;
 	}
 
-	private Set<CloudraidNode> getHighestPerf(Set<CloudraidNode> nodes) {
+	public static Set<CloudraidNode> applyOptimization(CloudstoreConfig config, Set<CloudraidNode> nodes) {
+
+		for (OPTIMIZATION_FUNCTION of : config.getOptimizationOrdering()) {
+			if (of.equals(OPTIMIZATION_FUNCTION.AVAILABILITY)) {
+				nodes = DataProcessor.getHighestAvail(nodes);
+			} else if (of.equals(OPTIMIZATION_FUNCTION.PERFORMANCE)) {
+				nodes = DataProcessor.getHighestPerf(nodes);
+			} else if (of.equals(OPTIMIZATION_FUNCTION.PRICE)) {
+				nodes = DataProcessor.getLowestCosts(nodes);
+			}
+		}
+		return nodes;
+	}
+
+	private static Set<CloudraidNode> getHighestPerf(Set<CloudraidNode> nodes) {
 
 		Set<CloudraidNode> newNodes = new HashSet<CloudraidNode>();
 
@@ -290,7 +296,7 @@ public class DataProcessor {
 		return newNodes;
 	}
 
-	private Set<CloudraidNode> getLowestCosts(Set<CloudraidNode> nodes) {
+	private static Set<CloudraidNode> getLowestCosts(Set<CloudraidNode> nodes) {
 
 		Set<CloudraidNode> newNodes = new HashSet<CloudraidNode>();
 
@@ -312,7 +318,7 @@ public class DataProcessor {
 		return newNodes;
 	}
 
-	private Set<CloudraidNode> getHighestAvail(Set<CloudraidNode> nodes) {
+	private static Set<CloudraidNode> getHighestAvail(Set<CloudraidNode> nodes) {
 
 		Set<CloudraidNode> newNodes = new HashSet<CloudraidNode>();
 

@@ -53,6 +53,7 @@ public class DefaultWindow {
 
 	private void loadConfig() {
 
+		//TODO: richtig die Config laden
 		DefaultWindow.config = CloudstoreConfig.loadDefault();
 	}
 

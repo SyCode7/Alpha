@@ -13,8 +13,30 @@ public class CloudraidNode {
 	private Set<PROVIDER_ENUM> provider;
 	private Set<PROVIDER_ENUM> provider4Download;
 	private long originalFileSize;
+	private HasseDiagramm hasseDiagramm;
 
-	public CloudraidNode(int k, int m, Set<PROVIDER_ENUM> provider, Set<PROVIDER_ENUM> provider4download, long originalFileSize) {
+	@Override
+	public String toString() {
+
+		double costs = ((double) ((int) (this.getCostsInComparisonToBestSingleUpload() * 100000))) / 1000d;
+		double performance = ((double) ((int) (this.getPerformanceInComparisonToBestSingleUpload() * 100000))) / 1000d;
+
+		StringBuilder sb = new StringBuilder("CR-Config[");
+
+		sb.append("K: ").append(this.k);
+		sb.append(" - M: ").append(this.m);
+		sb.append(" - up: ").append(this.provider);
+		sb.append(" - down: ").append(this.provider4Download);
+		sb.append(" - avail: ").append(this.getAvailabilityAsString());
+		sb.append(" - costs: ").append(costs).append("%");
+		sb.append(" - perf: ").append(performance).append("%");
+
+		sb.append("]");
+		return sb.toString();
+	}
+
+	public CloudraidNode(int k, int m, Set<PROVIDER_ENUM> provider, Set<PROVIDER_ENUM> provider4download, long originalFileSize,
+			HasseDiagramm hasseDiagramm) {
 
 		if (provider.size() != (k + m)) {
 			throw new IllegalArgumentException("Die Anzahl der Provider stimmt nicht mit n überein.");
@@ -34,16 +56,8 @@ public class CloudraidNode {
 		this.provider = provider;
 		this.provider4Download = provider4download;
 		this.originalFileSize = originalFileSize;
+		this.hasseDiagramm = hasseDiagramm;
 
-	}
-
-	@Override
-	public String toString() {
-
-		return "K: " + this.k + " - M: " + this.m + " - up: " + this.provider + " - down: " + this.provider4Download
-				+ " - avail: " + this.getAvailabilityAsString() + " - costs: "
-				+ ((double) ((int) (this.getCostsInComparisonToBestSingleUpload() * 100000))) / 1000d + "% - performance: "
-				+ ((double) ((int) (this.getPerformanceInComparisonToBestSingleUpload() * 100000))) / 1000d + "%";
 	}
 
 	public int getK() {
@@ -171,21 +185,17 @@ public class CloudraidNode {
 
 	public double getCostsInComparisonToBestSingleUpload() {
 
-		double toCompairWith = this.getBestCosts();
-
 		double ownValue = this.calcOwnCosts();
 
-		return ownValue / toCompairWith;
+		return ownValue / this.hasseDiagramm.bestCosts;
 
 	}
 
 	public double getPerformanceInComparisonToBestSingleUpload() {
 
-		double toCompairWith = this.getBestPerformanceTime();
-
 		double ownValue = this.calculateTime(this.getDownloadPerformance()) + this.calculateTime(this.getUploadPerformance());
 
-		return ownValue / toCompairWith;
+		return ownValue / this.hasseDiagramm.bestPerformance;
 	}
 
 	public String getCostsInComparisonToBestSingleUploadAsString(int numberOfDigits) {
@@ -201,25 +211,6 @@ public class CloudraidNode {
 		double newValue = Double.valueOf(i) / factor;
 		String s = String.valueOf(newValue);
 		return s.replace(".", ",");
-
-	}
-
-	private double getBestPerformanceTime() {
-
-		double best = Double.MAX_VALUE;
-		for (PROVIDER_ENUM prov : PROVIDER_ENUM.values()) {
-			double value = 0;
-
-			value += this.originalFileSize / InMemDatabase.getInstance().getUploadSpeedFor(prov, this.originalFileSize);
-			value += this.originalFileSize / InMemDatabase.getInstance().getDownloadSpeedFor(prov, this.originalFileSize);
-
-			if (best > value) {
-				best = value;
-			}
-
-		}
-
-		return best;
 
 	}
 
@@ -242,28 +233,6 @@ public class CloudraidNode {
 			thisCosts += (InMemDatabase.getInstance().getCostsPerReadFor(prov) / 1024 / 1024) * (this.originalFileSize / this.k);
 		}
 		return thisCosts;
-	}
-
-	private double getBestCosts() {
-
-		double bestValue = Double.MAX_VALUE;
-		for (PROVIDER_ENUM prov : PROVIDER_ENUM.values()) {
-			double value = 0;
-
-			value += (InMemDatabase.getInstance().getCostsPerWriteFor(prov) / 1024 / 1024) * (this.originalFileSize);
-
-			value += InMemDatabase.getInstance().getCostsForStorage(prov, this.originalFileSize);
-
-			value += (InMemDatabase.getInstance().getCostsPerRequestFor(prov) / 100000);
-
-			value += (InMemDatabase.getInstance().getCostsPerReadFor(prov) / 1024 / 1024) * (this.originalFileSize);
-
-			if (bestValue > value) {
-				bestValue = value;
-			}
-		}
-
-		return bestValue;
 	}
 
 }
