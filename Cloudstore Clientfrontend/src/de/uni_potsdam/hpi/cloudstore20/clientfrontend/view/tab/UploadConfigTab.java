@@ -283,11 +283,11 @@ public class UploadConfigTab extends TabElement {
 			return;
 		}
 
-		list_Examples.removeAll();
+		this.list_Examples.removeAll();
 		while (this.listIsInUsage) {}
 		this.listIsInUsage = true;
 		for (String s : this.listContent) {
-			list_Examples.add(s);
+			this.list_Examples.add(s);
 
 			this.listContent.clear();
 			this.somethingNew = false;
