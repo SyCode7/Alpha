@@ -24,7 +24,7 @@ public enum OPTIMIZATION_FUNCTION {
 			}
 		}
 
-		throw new IllegalArgumentException("Keine Funktion f�r diesen String gefunden");
+		throw new IllegalArgumentException("Keine Funktion für diesen String gefunden");
 	}
 
 }

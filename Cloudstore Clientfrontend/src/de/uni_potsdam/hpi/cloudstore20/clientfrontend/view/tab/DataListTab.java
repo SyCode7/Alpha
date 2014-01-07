@@ -41,7 +41,7 @@ public class DataListTab extends TabElement {
 		SashForm sashForm_1 = new SashForm(sashForm, SWT.NONE);
 
 		Button btnNewButton_1 = new Button(sashForm_1, SWT.NONE);
-		btnNewButton_1.setText("Eintrag öffnen");
+		btnNewButton_1.setText("Eintrag Ã¶ffnen");
 
 		new Composite(sashForm_1, SWT.NONE);
 		sashForm_1.setWeights(new int[] { 1, 5 });
