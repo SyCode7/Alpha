@@ -2,7 +2,7 @@ package de.uni_potsdam.hpi.cloudstore20.meta.dataTransmitting.config.enums;
 
 public enum OPTIMIZATION_FUNCTION {
 
-	PRICE("Preis"), PERFORMANCE("Performance"), AVAILABILITY("Verfügbarkeit");
+	PRICE("Preis"), PERFORMANCE("Performance"), AVAILABILITY("VerfÃ¼gbarkeit");
 
 	private String displayString;
 
@@ -24,7 +24,7 @@ public enum OPTIMIZATION_FUNCTION {
 			}
 		}
 
-		throw new IllegalArgumentException("Keine Funktion für diesen String gefunden");
+		throw new IllegalArgumentException("Keine Funktion fï¿½r diesen String gefunden");
 	}
 
 }
