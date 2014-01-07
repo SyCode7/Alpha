@@ -288,10 +288,9 @@ public class UploadConfigTab extends TabElement {
 		this.listIsInUsage = true;
 		for (String s : this.listContent) {
 			this.list_Examples.add(s);
-
-			this.listContent.clear();
-			this.somethingNew = false;
 		}
+		this.listContent.clear();
+		this.somethingNew = false;
 		this.listIsInUsage = false;
 
 	}
