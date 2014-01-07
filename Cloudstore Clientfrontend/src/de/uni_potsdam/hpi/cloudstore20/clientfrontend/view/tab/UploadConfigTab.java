@@ -151,7 +151,7 @@ public class UploadConfigTab extends TabElement {
 		SashForm sashForm_AutomaticOptimizing = new SashForm(sashForm_ConfigMainFrame, SWT.VERTICAL);
 
 		Label lblAutomatischeOptimierung = new Label(sashForm_AutomaticOptimizing, SWT.NONE);
-		lblAutomatischeOptimierung.setText("automatische Optimierung");
+		lblAutomatischeOptimierung.setText("Filterung der Ergebnisse nach:");
 
 		Label lblAusf = new Label(sashForm_AutomaticOptimizing, SWT.NONE);
 		lblAusf.setText("1. Stufe");
@@ -194,7 +194,7 @@ public class UploadConfigTab extends TabElement {
 			}
 		});
 
-		// Alle auswahlmöglichkeiten laden
+		// Alle auswahlmï¿½glichkeiten laden
 		for (OPTIMIZATION_FUNCTION of : OPTIMIZATION_FUNCTION.values()) {
 			ersteStufe.add(of.getDisplayString());
 			zweiteStufe.add(of.getDisplayString());
